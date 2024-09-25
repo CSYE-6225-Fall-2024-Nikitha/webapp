@@ -1,6 +1,7 @@
 const pool = require('../config/dbConfig');
 
 const healthCheck = async (req, res) => {
+    // Check for query parameters
     if (Object.keys(req.query).length > 0) {
         return res.status(400).send(); 
     }
@@ -8,6 +9,10 @@ const healthCheck = async (req, res) => {
     if (req.headers['content-length'] > 0) {
         return res.status(400).send(); 
     }
+
+    if (req.body && Object.keys(req.body).length > 0) {
+      return res.status(400).send(); 
+  }
 
     try {
         // Check database connection
