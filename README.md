@@ -13,10 +13,17 @@ Before you begin, ensure you have the following installed:
 
 ## Getting Started
 
-### Cloning the Repository
-To clone the repository, use the following command:
-```bash
-git clone https://github.com/YOUR_USERNAME/webapp.git
+### Git Instructions
+
+
+ **Fork the Repository**
+
+   - Go to the [GitHub repository](https://github.com/CSYE-6225-Fall-2024-Nikitha/webapp) and click the "Fork" button at the top right.
+
+**Clone Your Fork**
+   - Once you have forked the repository, clone it to your local machine using the following command:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/webapp.git
 ``` 
 ### Setting Up Environment Variables
 Navigate to the project directory:
@@ -77,12 +84,11 @@ To stop the application, use Ctrl + C in the terminal where the application is r
 - Any API requests that are not GET will return a 405 Method Not Allowed status.
 
 - If there is any payload in the request body, a 400 Bad Request response will be sent.
-  
+
 ### Contribution
 If you want to contribute, feel free to create a new branch and submit a pull request.
 
 
 ### Instructions:
-- Replace `YOUR_USERNAME` with your actual GitHub username in the clone URL.
 - Fill in the placeholders in the `.env` file template with actual values.
 
