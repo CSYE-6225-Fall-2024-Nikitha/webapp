@@ -2,12 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { healthCheck } = require('../controllers/healthCheckController');
 
+// Method Not Allowed for HEAD
+router.head('/healthz', (req, res) => {
+    res.set('Cache-Control', 'no-cache');
+    return res.status(405).send(); // Method Not Allowed
+});
+
 // Health check endpoint
 router.get('/healthz', healthCheck);
 
+// Method Not Allowed for other methods
 router.all('/healthz', (req, res) => {
     res.set('Cache-Control', 'no-cache');
-    return res.status(405).send(); // Method Not Allowed, no body in the response
+    return res.status(405).send(); 
 });
 
 module.exports = router;
