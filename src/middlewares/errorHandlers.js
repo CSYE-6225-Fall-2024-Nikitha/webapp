@@ -3,7 +3,7 @@ const setErrorResponse = (err, response) => {
   response.status(503).send(); 
 };
 
-const handleRouteResponse = (request, response, next) => {
+const setRouteResponse = (request, response, next) => {
   if (request.path === '/healthz') {
       return next();
   }
@@ -24,6 +24,6 @@ const setResponse = (request, response) => {
 
 module.exports = {
   setErrorResponse,
-  handleRouteResponse,
+  setRouteResponse,
   setResponse,
 };

@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const healthRoutes = require('./routes/healthRoutes');
-const { setErrorResponse, handleRouteResponse } = require('./middlewares/errorHandlers');
+const { setErrorResponse, setRouteResponse } = require('./middlewares/errorHandlers');
 require('dotenv').config();
 
 const app = express();
@@ -11,10 +11,10 @@ app.use(bodyParser.json({ limit: '1mb' }));
 
 app.use('/', healthRoutes);
 
-app.use(handleRouteResponse);
+app.use(setRouteResponse);
 
 app.use((err, req, res, next) => {
-    setErrorResponse(err, res); 
+    return res.status(400).send(); 
 });
 
 const PORT = process.env.PORT || 8080;
