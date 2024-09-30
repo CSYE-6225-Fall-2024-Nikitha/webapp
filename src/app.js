@@ -1,8 +1,9 @@
+const registerRouter = require('./routes/index.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors'); // Import cors here
 const { setErrorResponse, setRouteResponse } = require('./controllers/errorHandlers.js');
-const registerRouter = require('./routes/index.js');
 require('dotenv').config();
  
 
@@ -11,14 +12,8 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use('/', healthRoutes);
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // setup routes
 registerRouter(app);
-
-
-app.use((err, req, res, next) => {
-    return res.status(400).send(); 
-});
 module.exports = app;
