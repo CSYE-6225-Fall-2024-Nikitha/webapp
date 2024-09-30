@@ -10,6 +10,18 @@ const User = sequelize.define('User', {
     defaultValue: DataTypes.UUIDV4,
   },
 
+  username:{
+    types:DataTypes.STRING,
+    allowNull: false,
+    unique:true,
+  },
+
+  password: {
+    types:DataTypes.STRING,
+    allowNull: false,
+    unique:false,
+  },
+
   first_name:{
     types:DataTypes.STRING,
     allowNull: false,
@@ -17,18 +29,6 @@ const User = sequelize.define('User', {
   },
 
   last_name:{
-    types:DataTypes.STRING,
-    allowNull: false,
-    unique:false,
-  },
-
-  user_name:{
-    types:DataTypes.STRING,
-    allowNull: false,
-    unique:true,
-  },
-
-  password: {
     types:DataTypes.STRING,
     allowNull: false,
     unique:false,
@@ -46,6 +46,7 @@ const User = sequelize.define('User', {
     allowNull: true,
     unique: false,
     defaultValue: DataTypes.NOW,
+    onUpdate: DataTypes.NOW,
   }
 
 });
