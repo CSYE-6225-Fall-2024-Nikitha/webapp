@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { setErrorResponse, setRouteResponse } = require('./middlewares/errorHandlers');
+const { setErrorResponse, setRouteResponse } = require('./controllers/errorHandlers.js');
 const registerRouter = require('./routes/index.js');
 require('dotenv').config();
  
