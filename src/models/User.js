@@ -10,7 +10,7 @@ const User = sequelize.define('User', {
     defaultValue: DataTypes.UUIDV4,
   },
 
-  username:{
+  email:{
     type:DataTypes.STRING,
     allowNull: false,
     unique:true,
@@ -48,6 +48,10 @@ const User = sequelize.define('User', {
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW,
   }
+}, {
+  indexes: [
+      { unique: true, fields: ['email'] }
+  ],
 
 });
 

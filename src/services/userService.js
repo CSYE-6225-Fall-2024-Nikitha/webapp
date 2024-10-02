@@ -1,20 +1,18 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const { isValidEmail } = require('../utils/emailValidation'); // Import the validation function
+const { isValidEmail } = require('../utils/emailValidation'); 
 
 
 const authenticateUser = async (email, password) => {
-  const user = await User.findOne({ where: { username: email } }); // Assuming username is the email
-
+  const user = await User.findOne({ where: { email: email } }); 
   if (!user) {
       throw new Error('User not found');
   }
-
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
       throw new Error('Invalid credentials');
   }
-
+  
   return user; 
 };
 
@@ -22,7 +20,7 @@ const createUser = async ({first_name, last_name, password, email }) => {
   if (!isValidEmail(email)) {
     throw new Error('Invalid email format'); // Throw an error for invalid email
 }
-    const existingUser = await User.findOne({ where: { username: email } });
+    const existingUser = await User.findOne({ where: { email: email } });
     if (existingUser) {
         throw new Error('User already exists');
     }
@@ -30,7 +28,7 @@ const createUser = async ({first_name, last_name, password, email }) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     
     const user = await User.create({
-        username: email,  // Use email as the username
+        email: email, 
         password: hashedPassword,
         first_name,
         last_name,
@@ -41,18 +39,20 @@ const createUser = async ({first_name, last_name, password, email }) => {
 
 
 const updateUser = async (userId, updateData) => {
+    console.log('Updating user service');
+    console.log(updateData);
   const user = await User.findByPk(userId);
 
   if (!user) {
       throw new Error('User not found');
   }
-
+  console.log(user);
   // Only update allowed fields
-  if (updateData.firstName) {
-      user.firstName = updateData.firstName;
+  if (updateData.first_name) {
+      user.first_name = updateData.first_name;
   }
-  if (updateData.lastName) {
-      user.lastName = updateData.lastName;
+  if (updateData.last_name) {
+      user.last_name = updateData.last_name;
   }
   if (updateData.password) {
       user.password = await bcrypt.hash(updateData.password, 10);
@@ -62,6 +62,7 @@ const updateUser = async (userId, updateData) => {
 
   // Save the changes
   await user.save();
+  console.log(user);
   return user;
 };
 
@@ -69,7 +70,7 @@ const updateUser = async (userId, updateData) => {
 
 const getUser = async (userId) => {
     const user = await User.findByPk(userId, { attributes: { exclude: ['password','createdAt', 'updatedAt'] } });
-
+    console.log(user);
     if (!user) {
         throw new Error('User not found');
     }

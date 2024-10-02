@@ -10,7 +10,7 @@ const healthCheck = async (req, res) => {
         setResponse(req, res); 
     } catch (error) {
         console.error('Error during health check:', error.message);
-        return res.status(400).send(); 
+        setErrorResponse(req,res);
     }
 };
 
