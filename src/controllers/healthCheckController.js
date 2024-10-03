@@ -4,9 +4,7 @@ const { checkDatabaseConnection, validateRequest } = require('../services/health
 const healthCheck = async (req, res) => {
     try {
         validateRequest(req); 
-
         await checkDatabaseConnection(); 
-
         setResponse(req, res); 
     } catch (error) {
         console.error('Error during health check:', error.message);

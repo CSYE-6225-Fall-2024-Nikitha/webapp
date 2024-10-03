@@ -1,6 +1,4 @@
 const userService = require('../services/userService');
-const userAuth = require('../utils/userAuth');
-const { setErrorResponse } = require('./errorHandlers');
 const { validateRequest } = require('../services/healthCheckService');
 
 // Validation utility function
@@ -25,35 +23,50 @@ const validateUserFields = (data) => {
     return errors;
 };
 
+// CREATE USER
 const createUser = async (req, res) => {
-    res.set('Cache-Control', 'no-cache');
-    res.set('Content-Type', 'application/json');
+    res.set({
+        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/json',
+    });
+
     const allowedFields = ['first_name', 'last_name', 'password', 'email'];
+    
     const invalidFields = Object.keys(req.body).filter(field => !allowedFields.includes(field));
     if (invalidFields.length > 0) {
-        return res.status(400).json({ errors: `Invalid fields: ${invalidFields.join(', ')}` });
+        return res.status(400).send();
     }
 
     const { first_name, last_name, password, email } = req.body;
 
     try {
+        // Validate user fields
         const validationErrors = validateUserFields({ first_name, last_name, password, email });
         if (validationErrors.length > 0) {
-            return res.status(400).json({ errors: validationErrors });
+            return res.status(400).send();
         }
 
+        // Create the user
         const user = await userService.createUser({ first_name, last_name, password, email });
-        // Return user info without exposing password
-        res.status(201).json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name });
+
+        return res.status(201).json({
+            id: user.id,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+        });
     } catch (error) {
         console.error(error);
-        if (error.message === 'User already exists' || error.message === 'Invalid email format' || error.message === 'Bad Request') {
-            return res.status(400).send(); // User already exists
+        if (['User already exists', 'Invalid email format', 'Bad Request'].includes(error.message)) {
+            return res.status(400).send(); // Known errors return 400
         }
-        res.status(400).send(); 
+
+        return res.status(400).send(); 
     }
 };
 
+
+//UPDATE USER
 const updateUser = async (req, res) => {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'application/json');
@@ -61,107 +74,95 @@ const updateUser = async (req, res) => {
     try {
         const { email, password } = req.auth;
 
-        // Step 1: Authenticate user
         const user = await userService.authenticateUser(email, password);
         if (!user) {
-            throw new Error('Invalid credentials'); 
+            return res.status(401).send(); 
         }
-        const allowedFields = ['first_name', 'last_name', 'password']; 
 
-        // Step 2: Check if the request body is provided
+        const allowedFields = ['first_name', 'last_name', 'password'];
         const requiredFields = ['first_name', 'last_name', 'password', 'email'];
+
         if (!req.body || Object.keys(req.body).length === 0) {
-            throw new Error('Body is missing to update');
+            return res.status(400).send(); 
         }
 
         const userId = user.id; 
         const updateData = req.body;
-        const { first_name, last_name, password: newPassword } = updateData; // Use a different variable name for password
-        const validationError = validateUserFields({ first_name, last_name, password, email });
-        
+        const { first_name, last_name, password: newPassword } = updateData;
+
+        const validationError = validateUserFields({ first_name, last_name, newPassword, email });
         if (validationError.length > 0) {
-            return res.status(400).send();
+            return res.status(400).json({ errors: validationError }); 
         }
 
-
-
-        // Step 3: Validate ownership (user can only update their own information)
         if (updateData.email && updateData.email !== email) {
-            throw new Error('Forbidden user'); 
-        }
-
-        // Validate fields
-        const validationErrors = validateUserFields(updateData);
-        if (validationErrors.length > 0) {
-            return res.status(400).json({ errors: validationErrors });
+            return res.status(403).send();
         }
 
         const missingFields = requiredFields.filter(field => !updateData[field]);
         if (missingFields.length > 0) {
-            throw new Error('Body is missing to update'); // Throw error if any required field is missing
+            return res.status(400).send(); 
         }
 
-        // Step 4: Check for invalid fields
         const invalidFields = Object.keys(updateData).filter(key => !allowedFields.includes(key) && key !== 'email');
         if (invalidFields.length > 0) {
-            throw new Error('Bad Request: Invalid fields in request body'); // Throw error for invalid fields
+            return res.status(400).send(); 
         }
 
         // Step 5: Update user information, omitting email if it's present
         if (updateData.email) {
-            delete updateData.email; // Remove email from update data
+            delete updateData.email; 
         }
 
         await userService.updateUser(userId, updateData);
 
-        // Step 6: Send success response
-        return res.status(204).send();
+        return res.status(204).send(); 
 
     } catch (error) {
-        // Log the error for debugging
         console.error(error);
-        if (error.message === 'Invalid credentials' || error.message === 'Unauthorized' || error.message === 'User not found') {
-            return res.status(401).send(); // Return 401 for invalid credentials or unauthorized access
-        } else if (error.message === 'Bad Request' || error.message === 'Body is missing to update') {
+
+        if (error.message === 'Invalid credentials') {
+            return res.status(401).send(); 
+        } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
             return res.status(400).send(); // Return 400 for bad request errors
-        }else if(error.message === 'Forbidden user'){
+        } else if (error.message === 'Forbidden user') {
             return res.status(403).send(); 
         }
-
-        console.error(error); // Log unexpected errors
-        return res.status(400).send(); // Return 400 for unexpected errors
+        return res.status(400).send(); 
     }
 };
 
+
+//GET USER
 const getUser = async (req, res) => {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'application/json');
 
     try {
         const { email, password } = req.auth;
+
         const user = await userService.authenticateUser(email, password);
         validateRequest(req);
         
         if (!user) {
-            throw new Error('Invalid credentials');
+            return res.status(401).send(); 
         }
-
-        // Get user information
         const userId = user.id; 
         const userInfo = await userService.getUser(userId);
         
-        res.status(200).json(userInfo); 
+        return res.status(200).json(userInfo); 
+
     } catch (error) {
         console.error(error);
-        
-        // Handle different error scenarios
-        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
-            return res.status(401).send(); // Return 401 for invalid credentials
+                if (error.message === 'Invalid credentials' || error.message === 'User not found') {
+            return res.status(401).send(); 
         } else if (error.message === 'Bad Request') {
             return res.status(400).send(); 
         }
+        return res.status(400).send(); 
     }
 };
+
 
 module.exports = {
     createUser,
