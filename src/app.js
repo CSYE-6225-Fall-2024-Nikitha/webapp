@@ -2,8 +2,7 @@ const registerRouter = require('./routes/index.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const cors = require('cors'); // Import cors here
-const { setErrorResponse, setRouteResponse } = require('./controllers/errorHandlers.js');
+const cors = require('cors');
 require('dotenv').config();
  
 

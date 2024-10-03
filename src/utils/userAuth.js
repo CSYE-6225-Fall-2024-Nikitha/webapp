@@ -7,10 +7,17 @@ const userAuth = (req, res, next) => {
   
   const token = authHeader.split(' ')[1];
   const credentials = Buffer.from(token, 'base64').toString('utf-8').split(':');
-  const email = credentials[0]; // Username (email)
-  const password = credentials[1]; // Password
+  if (credentials.length !== 2) {
+    return res.status(401).json();
+  }
 
-  // Store email and password in request object for further processing
+  const email = credentials[0]; 
+  const password = credentials[1];
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+      return res.status(400).send();
+  }
   req.auth = { email, password };
   next();
 };

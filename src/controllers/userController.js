@@ -28,6 +28,11 @@ const validateUserFields = (data) => {
 const createUser = async (req, res) => {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'application/json');
+    const allowedFields = ['first_name', 'last_name', 'password', 'email'];
+    const invalidFields = Object.keys(req.body).filter(field => !allowedFields.includes(field));
+    if (invalidFields.length > 0) {
+        return res.status(400).json({ errors: `Invalid fields: ${invalidFields.join(', ')}` });
+    }
 
     const { first_name, last_name, password, email } = req.body;
 
@@ -45,7 +50,7 @@ const createUser = async (req, res) => {
         if (error.message === 'User already exists' || error.message === 'Invalid email format' || error.message === 'Bad Request') {
             return res.status(400).send(); // User already exists
         }
-        res.status(400).send(); // Handle unexpected errors gracefully
+        res.status(400).send(); 
     }
 };
 
@@ -71,7 +76,9 @@ const updateUser = async (req, res) => {
 
         const userId = user.id; 
         const updateData = req.body;
+        const { first_name, last_name, password: newPassword } = updateData; // Use a different variable name for password
         const validationError = validateUserFields({ first_name, last_name, password, email });
+        
         if (validationError.length > 0) {
             return res.status(400).send();
         }
@@ -80,7 +87,7 @@ const updateUser = async (req, res) => {
 
         // Step 3: Validate ownership (user can only update their own information)
         if (updateData.email && updateData.email !== email) {
-            throw new Error('Unauthorized'); 
+            throw new Error('Forbidden user'); 
         }
 
         // Validate fields
@@ -117,6 +124,8 @@ const updateUser = async (req, res) => {
             return res.status(401).send(); // Return 401 for invalid credentials or unauthorized access
         } else if (error.message === 'Bad Request' || error.message === 'Body is missing to update') {
             return res.status(400).send(); // Return 400 for bad request errors
+        }else if(error.message === 'Forbidden user'){
+            return res.status(403).send(); 
         }
 
         console.error(error); // Log unexpected errors

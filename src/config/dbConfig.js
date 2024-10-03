@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
       max: 10,             
       min: 0,
       acquire: 3000,      
-      idle: 90000          
+      idle: 1000          
     },
     logging: false,      
   }
