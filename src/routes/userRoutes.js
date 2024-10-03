@@ -1,12 +1,7 @@
 const express = require('express');
 const { createUser, updateUser, getUser } = require('../controllers/userController'); // Adjust the path if needed
 const userAuth = require('../utils/userAuth');
-const startConnection = require('../utils/checkConnection'); // Adjust the path if needed
 const checkConnection = require('../utils/checkConnection');
-
-
-const routeCheck = require('../utils/routeCheck'); 
-
 const router = express.Router();
 
 

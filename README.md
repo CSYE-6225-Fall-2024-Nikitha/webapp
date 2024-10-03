@@ -1,7 +1,7 @@
 # Health Check API
 
 ## Overview
-This project implements a Health Check API as part of a cloud-native web application assignment. The API checks the health of the application by verifying the connection to the PostgreSQL database and responds accordingly.
+This project implements a Health Check API, followed by User creation API as part of a cloud-native web application assignment. The API checks the health of the application by verifying the connection to the PostgreSQL database and responds accordingly.The User API creates user, fetches and updates user
 
 ## Prerequisites
 Before you begin, ensure you have the following installed:
@@ -62,6 +62,52 @@ The application will be running on http://localhost:8080.
   - 400 Bad Request: If the request includes a body or any query parameters.
   - 405 Method Not Allowed: If using any method other than GET.
   - 503 Service Unavailable: If the database connection fails.
+
+- Endpoint: v1/user
+- Supported Method: only POST requests are allowed
+- Responses:
+  - Success (201 Created)
+    ```
+    {
+    "message": "User account created successfully.",
+    "account_created": "2024-10-03T12:00:00Z"
+    }
+    ```
+    - Error (400 Bad Request):
+    ```
+    {
+    "error": "A user account with this email address already exists          
+    }
+    ```
+
+- Endpoint: v1/user/self 
+- Supported Method: PUT and GET are allowed for authenticated users
+- Responses:
+  - GET : Success (200 OK): (user retrieval succesful)
+  ```
+  {
+  "id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+  "first_name": "Jane",
+  "last_name": "Doe",
+  "email": "jane.doe@example.com",
+  "account_created": "2016-08-29T09:12:33.001Z",
+  "account_updated": "2016-08-29T09:12:33.001Z"
+  }
+  ```
+  - 400 Bad Request
+  - 401 Unauthorized Request
+  - PUT: 
+  ```
+  {
+  "first_name": "Jane",
+  "last_name": "Doe",
+  "password": "skdjfhskdfjhg",
+  "email": "jane.doe@example.com"
+  }
+  ```
+  - 204 No Content
+  - 400 Bad Request
+  
 
 ### Testing the Health Check API
 You can test the Health Check API using Postman or curl.

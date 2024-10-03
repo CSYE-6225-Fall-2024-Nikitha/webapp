@@ -60,7 +60,7 @@ const createUser = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        if (['User already exists', 'Invalid email format', 'Bad Request'].includes(error.message)) {
+        if (['User already exists', 'Invalid email format', 'Bad Request'].includes(error.message) || err instanceof SyntaxError ) {
             return res.status(400).send(); // Known errors return 400
         }
 
@@ -129,6 +129,8 @@ const updateUser = async (req, res) => {
             return res.status(400).send(); // Return 400 for bad request errors
         } else if (error.message === 'Forbidden user') {
             return res.status(403).send(); 
+        }else if(err instanceof SyntaxError ){
+            return res.status(400).send();
         }
         return res.status(400).send(); 
     }
@@ -158,7 +160,7 @@ const getUser = async (req, res) => {
         console.error(error);
                 if (error.message === 'Invalid credentials' || error.message === 'User not found') {
             return res.status(401).send(); 
-        } else if (error.message === 'Bad Request') {
+        } else if (error.message === 'Bad Request' || err instanceof SyntaxError ) {
             return res.status(400).send(); 
         }
         return res.status(400).send(); 
