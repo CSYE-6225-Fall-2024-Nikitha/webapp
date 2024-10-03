@@ -18,7 +18,7 @@ const authenticateUser = async (email, password) => {
 
 const createUser = async ({first_name, last_name, password, email }) => {
   if (!isValidEmail(email)) {
-    throw new Error('Invalid email format'); // Throw an error for invalid email
+    throw new Error('Invalid email format'); 
 }
     const existingUser = await User.findOne({ where: { email: email } });
     if (existingUser) {
@@ -39,14 +39,11 @@ const createUser = async ({first_name, last_name, password, email }) => {
 
 
 const updateUser = async (userId, updateData) => {
-    console.log('Updating user service');
-    console.log(updateData);
   const user = await User.findByPk(userId);
 
   if (!user) {
       throw new Error('User not found');
   }
-  console.log(user);
   // Only update allowed fields
   if (updateData.first_name) {
       user.first_name = updateData.first_name;
@@ -59,10 +56,7 @@ const updateUser = async (userId, updateData) => {
   }
 
   user.account_updated = new Date();
-
-  // Save the changes
   await user.save();
-  console.log(user);
   return user;
 };
 

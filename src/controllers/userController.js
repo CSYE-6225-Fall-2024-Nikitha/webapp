@@ -1,6 +1,8 @@
 const userService = require('../services/userService');
 const { validateRequest } = require('../services/healthCheckService');
 
+
+
 // Validation utility function
 const validateUserFields = (data) => {
     const { first_name, last_name, password, email } = data;
