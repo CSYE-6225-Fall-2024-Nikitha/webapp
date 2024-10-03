@@ -8,6 +8,9 @@ const healthCheck = async (req, res) => {
         setResponse(req, res); 
     } catch (error) {
         console.error('Error during health check:', error.message);
+        if(error.message === 'Bad Request'){
+            return res.status(400).send();
+        }
         setErrorResponse(req,res);
     }
 };

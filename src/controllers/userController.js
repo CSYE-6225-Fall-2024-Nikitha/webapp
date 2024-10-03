@@ -77,7 +77,6 @@ const updateUser = async (req, res) => {
 
     try {
         const { email, password } = req.auth;
-
         const user = await userService.authenticateUser(email, password);
         if (!user) {
             return res.status(401).send(); 
@@ -165,7 +164,7 @@ const getUser = async (req, res) => {
     } catch (error) {
         console.error(error);
                 if (error.message === 'Invalid credentials' || error.message === 'User not found') {
-            return res.status(401).send(); 
+                return res.status(401).send(); 
         } else if (error.message === 'Bad Request' || err instanceof SyntaxError ) {
             return res.status(400).send(); 
         }
