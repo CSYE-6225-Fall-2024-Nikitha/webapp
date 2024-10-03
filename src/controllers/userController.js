@@ -55,6 +55,8 @@ const createUser = async (req, res) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
+            account_created:user.account_created,
+            account_updated:user.account_updated
         });
     } catch (error) {
         console.error(error);
@@ -91,10 +93,10 @@ const updateUser = async (req, res) => {
         const updateData = req.body;
         const { first_name, last_name, password: newPassword } = updateData;
 
-        const validationError = validateUserFields({ first_name, last_name, newPassword, email });
-        if (validationError.length > 0) {
-            return res.status(400).json({ errors: validationError }); 
-        }
+        // const validationError = validateUserFields({ first_name, last_name, newPassword, email });
+        // if (validationError.length > 0) {
+        //     return res.status(400).json({ errors: validationError }); 
+        // }
 
         if (updateData.email && updateData.email !== email) {
             return res.status(403).send();
@@ -121,7 +123,7 @@ const updateUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        if (error.message === 'Invalid credentials') {
+        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
             return res.status(401).send(); 
         } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
             return res.status(400).send(); // Return 400 for bad request errors
