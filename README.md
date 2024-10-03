@@ -124,6 +124,83 @@ curl -vvv -XPUT http://localhost:8080/healthz
 ### Stopping the Application
 To stop the application, use Ctrl + C in the terminal where the application is running.
 
+### Deploying Application on Cloud
+This document outlines the steps to launch an Ubuntu 24.04 LTS VM on DigitalOcean, set up the necessary environment, and run the application for the demo.
+
+## Prerequisites
+
+- A DigitalOcean account
+- Access to the code submission ZIP file from Canvas
+
+## Steps
+
+### 1. Launch Ubuntu 24.04 LTS VM on DigitalOcean
+
+1. **Sign In to DigitalOcean**: Go to [DigitalOcean](https://www.digitalocean.com/) and sign in to your account.
+2. **Create a Droplet**:
+   - Click on the **"Create"** button and select **"Droplets"**.
+   - Choose **Ubuntu 24.04 LTS** as the operating system.
+   - Select a plan according to your resource needs.
+   - Choose a data center region close to your location.
+   - Set up SSH keys or password for authentication.
+   - Click **"Create Droplet"**.
+
+### 2. Download Code Submission and SCP to the VM
+
+1. **Download Code**: Obtain the ZIP file containing the code submission from Canvas.
+2. **Transfer ZIP to VM**:
+   - Open a terminal on your local machine.
+   - Use `scp` to copy the ZIP file to your VM:
+     ```bash
+     scp /path/to/your/code.zip root@your_droplet_ip:/path/on/vm
+     ```
+
+### 3. Install PostgreSQL RDBMS
+
+1. **Connect to Your VM**:
+   ```bash
+   ssh root@your_droplet_ip
+2. **Update Package List**:
+  ```
+   sudo apt update
+   ```
+3. **Install PostgreSQL**:
+```
+sudo apt install postgresql postgresql-contrib
+
+```
+
+4. **Install Dependencies**:
+```
+sudo apt install nodejs npm
+```
+5. **Build Application**:
+```
+unzip /path/on/vm/code.zip -d /path/on/vm/code
+cd /path/on/vm/code
+```
+6. **Install Node.js Dependencies**:
+```
+npm install
+```
+7. **Update Application Configuration**:
+- Manually update the application configuration in the external configuration file as needed.
+
+- Ensure that you do not modify any source files.
+
+8. **Launch the Application**:
+```
+npm start
+
+```
+9. **Validate Application Health**
+```
+curl http://localhost:your_port/healthz
+```
+10. **Test USER API Operations**
+- Perform tests for all USER API operations (like create, read, update, delete) using tools like Postman or curl.
+- Ensure that the database is set up automatically without executing any SQL scripts manually.
+
 ### Additional Notes
 - Ensure your PostgreSQL server is running before starting the application.
 
@@ -131,8 +208,7 @@ To stop the application, use Ctrl + C in the terminal where the application is r
 
 - If there is any payload in the request body, a 400 Bad Request response will be sent.
 
-### Contribution
-If you want to contribute, feel free to create a new branch and submit a pull request.
+
 
 
 ### Instructions:
