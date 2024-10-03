@@ -19,7 +19,7 @@ const userAuth = (req, res, next) => {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-      return res.status(400).send();
+      return res.status(401).send();
   }
   req.auth = { email, password };
   next();
