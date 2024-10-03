@@ -72,6 +72,7 @@ const createUser = async (req, res) => {
 //UPDATE USER
 const updateUser = async (req, res) => {
     res.set('Cache-Control', 'no-cache');
+   
     res.set('Content-Type', 'application/json');
 
     try {
@@ -85,6 +86,10 @@ const updateUser = async (req, res) => {
         const allowedFields = ['first_name', 'last_name', 'password'];
         const requiredFields = ['first_name', 'last_name', 'password', 'email'];
 
+        if (req.headers['content-type'] !== 'application/json') {
+            return res.status(400).send(); 
+        }
+
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).send(); 
         }
@@ -93,14 +98,10 @@ const updateUser = async (req, res) => {
         const updateData = req.body;
         const { first_name, last_name, password: newPassword } = updateData;
 
-        // const validationError = validateUserFields({ first_name, last_name, newPassword, email });
-        // if (validationError.length > 0) {
-        //     return res.status(400).json({ errors: validationError }); 
-        // }
-
         if (updateData.email && updateData.email !== email) {
             return res.status(403).send();
         }
+
 
         const missingFields = requiredFields.filter(field => !updateData[field]);
         if (missingFields.length > 0) {
@@ -110,6 +111,11 @@ const updateUser = async (req, res) => {
         const invalidFields = Object.keys(updateData).filter(key => !allowedFields.includes(key) && key !== 'email');
         if (invalidFields.length > 0) {
             return res.status(400).send(); 
+        }
+
+        const validationError = validateUserFields({ first_name, last_name, password:newPassword, email });
+        if (validationError.length > 0) {
+            return res.status(400).json({ errors: validationError }); 
         }
 
         // Step 5: Update user information, omitting email if it's present

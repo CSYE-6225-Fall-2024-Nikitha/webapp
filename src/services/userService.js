@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const { isValidEmail } = require('../utils/emailValidation'); 
 
 
@@ -25,7 +26,9 @@ const createUser = async ({first_name, last_name, password, email }) => {
         throw new Error('User already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(saltRounds);
+
+    const hashedPassword = await bcrypt.hash(password, salt);
     
     const user = await User.create({
         email: email, 
@@ -52,7 +55,8 @@ const updateUser = async (userId, updateData) => {
       user.last_name = updateData.last_name;
   }
   if (updateData.password) {
-      user.password = await bcrypt.hash(updateData.password, 10);
+    const salt = await bcrypt.genSalt(saltRounds);
+    user.password = await bcrypt.hash(updateData.password, salt);
   }
 
   user.account_updated = new Date();
