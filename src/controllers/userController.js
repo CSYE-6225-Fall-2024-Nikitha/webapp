@@ -37,10 +37,9 @@ const createUser = async (req, res) => {
         return res.status(400).send();
     }
 
-    const { first_name, last_name, password, email } = req.body;
-
     try {
         // Validate user fields
+        const { first_name, last_name, password, email } = req.body;
         const validationErrors = validateUserFields({ first_name, last_name, password, email });
         if (validationErrors.length > 0) {
             return res.status(400).send();
@@ -120,7 +119,6 @@ const updateUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-
         if (error.message === 'Invalid credentials') {
             return res.status(401).send(); 
         } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
