@@ -27,7 +27,7 @@ describe('Health Check Controller', () => {
             expect(response.status).toBe(200);
         });
 
-        it("should return 500 if the database connection fails", async () => {
+        it("should return 503 if the database connection fails", async () => {
             validateRequest.mockImplementation(() => {});
             checkDatabaseConnection.mockRejectedValue({success: false});
 

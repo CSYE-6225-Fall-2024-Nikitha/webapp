@@ -1,4 +1,7 @@
 const userAuth = (req, res, next) => {
+  if (!req || !req.headers) {
+    return res.status(400).send();
+}
   const authHeader = req.headers['authorization'];
   
   if (!authHeader || !authHeader.startsWith('Basic ')) {
