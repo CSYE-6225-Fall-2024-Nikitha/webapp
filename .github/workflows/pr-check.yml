@@ -1,26 +1,54 @@
-name: Run Tests
+name: Integration Test Workflow
 
 on:
   pull_request:
     branches:
-      - main 
+      - main
 
 jobs:
-  test:
+  connect-postgres:
     runs-on: ubuntu-latest
+
+    env:
+      DB_HOST: ${{ secrets.POSTGRES_SERVER_URL }}
+      DB_USER: ${{ secrets.POSTGRES_USERNAME }}
+      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+      DB_PORT: ${{ secrets.POSTGRES_PORT }}
+      NODE_ENV: test
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Set up PostgreSQL client
+        uses: cypress-io/setup-postgresql@v1
         with:
-          node-version: '20'  
+          postgresql-version: "14" 
 
-      - name: Install Dependencies
+      - name: Set PostgreSQL Password
+        run: |
+          sudo -u postgres psql -c "ALTER USER ${{ secrets.POSTGRES_USERNAME }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+
+      - name: Create Database
+        run: |
+          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DATABASE }};"
+
+      - name: Install dependencies
         run: npm install
 
+      - name: Test Database Connection
+        run: |
+          psql -h ${{ secrets.POSTGRES_SERVER_URL }} -U ${{ secrets.POSTGRES_USERNAME }} -d ${{ secrets.POSTGRES_DATABASE }} -c "SELECT VERSION();"
+        env:
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        
       - name: Run Tests
-        run: npm test 
-
+        run: npm test
+        env:
+          DB_HOST: ${{ secrets.POSTGRES_SERVER_URL }}
+          DB_USER: ${{ secrets.POSTGRES_USERNAME }}
+          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+          DB_PORT: ${{ secrets.POSTGRES_PORT }}
+          NODE_ENV: test
