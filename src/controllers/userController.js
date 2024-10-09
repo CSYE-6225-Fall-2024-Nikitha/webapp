@@ -134,7 +134,6 @@ const updateUser = async (req, res) => {
         } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
             return res.status(400).send(); // Return 400 for bad request errors
         } else if (error.message === 'Forbidden user') {
-            // was 403 before
             return res.status(400).send(); 
         }else if(err instanceof SyntaxError ){
             return res.status(400).send();
