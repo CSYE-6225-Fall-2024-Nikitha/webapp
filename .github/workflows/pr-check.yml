@@ -13,22 +13,22 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: webapp               # The name of your database
+          POSTGRES_USER: nikitha            # Your PostgreSQL username
+          POSTGRES_PASSWORD: 123456          # Your PostgreSQL password
         ports:
-          - 5432:5432
+          - 5432:5432                       # Expose the port
         options: >-
-          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USERNAME }}"
+          --health-cmd="pg_isready -U nikitha" 
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
 
     env:
       DB_HOST: localhost
-      DB_USER: ${{ secrets.POSTGRES_USERNAME }}
-      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+      DB_USER: nikitha
+      DB_PASSWORD: 123456
+      DB_NAME: webapp
       DB_PORT: 5432
       NODE_ENV: test
 
@@ -42,7 +42,7 @@ jobs:
       - name: Wait for PostgreSQL to be ready
         run: |
           for i in {1..30}; do
-            if pg_isready -h localhost -U ${{ secrets.POSTGRES_USERNAME }}; then
+            if pg_isready -h localhost -U nikitha; then
               echo "PostgreSQL is ready!"
               exit 0
             fi
@@ -56,8 +56,8 @@ jobs:
         run: npm test
         env:
           DB_HOST: localhost
-          DB_USER: ${{ secrets.POSTGRES_USERNAME }}
-          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+          DB_USER: nikitha
+          DB_PASSWORD: 123456
+          DB_NAME: webapp
           DB_PORT: 5432
           NODE_ENV: test
