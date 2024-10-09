@@ -9,46 +9,57 @@ jobs:
   connect-postgres:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USERNAME }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
-      DB_HOST: ${{ secrets.POSTGRES_SERVER_URL }}
+      DB_HOST: localhost
       DB_USER: ${{ secrets.POSTGRES_USERNAME }}
       DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
       DB_PORT: ${{ secrets.POSTGRES_PORT }}
+      DB_DIALECT: postgres
       NODE_ENV: test
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up PostgreSQL client
-        uses: cypress-io/setup-postgresql@v1
-        with:
-          postgresql-version: "14" 
-
-      - name: Set PostgreSQL Password
-        run: |
-          sudo -u postgres psql -c "ALTER USER ${{ secrets.POSTGRES_USERNAME }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
-
-      - name: Create Database
-        run: |
-          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DATABASE }};"
-
       - name: Install dependencies
         run: npm install
 
-      - name: Test Database Connection
+      - name: Wait for PostgreSQL to be ready
         run: |
-          psql -h ${{ secrets.POSTGRES_SERVER_URL }} -U ${{ secrets.POSTGRES_USERNAME }} -d ${{ secrets.POSTGRES_DATABASE }} -c "SELECT VERSION();"
-        env:
-          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        
-      - name: Run Tests
+          for i in {1..30}; do
+            if pg_isready -h localhost -U ${{ secrets.POSTGRES_USERNAME }}; then
+              echo "PostgreSQL is ready!"
+              exit 0
+            fi
+            echo "Waiting for PostgreSQL..."
+            sleep 1
+          done
+          echo "PostgreSQL did not become ready in time!"
+          exit 1
+
+      - name: Run tests
         run: npm test
         env:
-          DB_HOST: ${{ secrets.POSTGRES_SERVER_URL }}
+          DB_HOST: localhost
           DB_USER: ${{ secrets.POSTGRES_USERNAME }}
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
-          DB_PORT: ${{ secrets.POSTGRES_PORT }}
+          DB_PORT: 5432
+          DB_DIALECT: postgres
           NODE_ENV: test
