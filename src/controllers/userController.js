@@ -98,7 +98,8 @@ const updateUser = async (req, res) => {
         const { first_name, last_name, password: newPassword } = updateData;
 
         if (updateData.email && updateData.email !== email) {
-            return res.status(403).send();
+            // was 403 before
+            return res.status(400).send();
         }
 
 
@@ -133,7 +134,8 @@ const updateUser = async (req, res) => {
         } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
             return res.status(400).send(); // Return 400 for bad request errors
         } else if (error.message === 'Forbidden user') {
-            return res.status(403).send(); 
+            // was 403 before
+            return res.status(400).send(); 
         }else if(err instanceof SyntaxError ){
             return res.status(400).send();
         }
