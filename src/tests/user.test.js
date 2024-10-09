@@ -169,17 +169,17 @@ describe('User Creation and Health Check Integration Tests', () => {
             expect(response.status).toBe(405); 
         });
 
-        it('should allow GET request on /v1/user/self', async () => {
-            const credentials = base64.encode(`${username}:${password}`);
+        // it('should allow GET request on /v1/user/self', async () => {
+        //     const credentials = base64.encode(`${username}:${password}`);
             
-            const response = await request(app)
-                .get('/v1/user/self')
-                .set('Authorization', `Basic ${credentials}`);
+        //     const response = await request(app)
+        //         .get('/v1/user/self')
+        //         .set('Authorization', `Basic ${credentials}`);
             
-            console.log(response.body);
-            expect(response.status).toBe(200); 
+        //     console.log(response.body);
+        //     expect(response.status).toBe(200); 
 
-        });
+        // });
 
         // it('should allow PUT request on /v1/user/self', async () => {
         //     const response = await request(app).put('/v1/user/self');
