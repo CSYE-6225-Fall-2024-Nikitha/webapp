@@ -134,7 +134,7 @@ describe('User Creation and Health Check Integration Tests', () => {
         });
     });
 
-    // Health Check Tests
+    // Health Check Test
     describe('Health Check Tests', () => {
         it("should return 200 if the database connection is successful", async () => {
             const response = await request(app).get("/healthz");
