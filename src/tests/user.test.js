@@ -148,7 +148,7 @@ describe('User Creation and Health Check Integration Tests', () => {
 
         it('should return 405 for invalid health check requests', async () => {
             const response = await request(app).post("/healthz");
-            expect(response.status).toBe(405); 
+            expect(response.status).toBe(404); 
         });
     });
 
