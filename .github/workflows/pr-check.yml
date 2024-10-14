@@ -1,21 +1,12 @@
+---
 name: Integration Test Workflow for webapp
-
 on:
   pull_request:
     branches:
       - main
-env:
-      DB_HOST: localhost
-      DB_USER: ${{ secrets.POSTGRES_USERNAME }}
-      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
-      DB_PORT: 5432
-      NODE_ENV: test
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:14
@@ -25,19 +16,20 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USERNAME }}"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
+        options: --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USERNAME }}"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      DB_HOST: localhost
+      DB_USER: ${{ secrets.POSTGRES_USERNAME }}
+      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+      DB_PORT: 5432
+      NODE_ENV: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Install dependencies
         run: npm install
-
       - name: Wait for PostgreSQL to be ready
         run: |
           for i in {1..30}; do
@@ -50,6 +42,5 @@ jobs:
           done
           echo "PostgreSQL did not become ready in time!"
           exit 1
-
       - name: Run Tests
         run: npm test
