@@ -11,9 +11,9 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_DB: "${{ secrets.POSTGRES_DATABASE }}"
-          POSTGRES_USER: "${{ secrets.POSTGRES_USERNAME }}"
-          POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+          POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USERNAME }}"
@@ -21,7 +21,7 @@ jobs:
     env:
       DB_HOST: localhost
       DB_USER: ${{ secrets.POSTGRES_USERNAME }}
-      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      DB_PASSWORD: ${{ secrets.POSTGRES_USERNAME }}
       DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
       DB_PORT: 5432
       NODE_ENV: test
