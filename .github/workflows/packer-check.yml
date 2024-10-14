@@ -25,6 +25,10 @@ jobs:
         run: |
           packer fmt -check .  
 
+      - name: Run packer init
+        id: init
+        run: "packer init ."
+
       - name: Run packer validate
         run: |
           packer validate .
