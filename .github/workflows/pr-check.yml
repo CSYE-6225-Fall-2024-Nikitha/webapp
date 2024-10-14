@@ -1,41 +1,48 @@
-name: Integration Test Workflow for webapp
+name: Integration Test Workflow
+
 on:
   pull_request:
     branches:
       - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: webapp               # The name of your database
+          POSTGRES_USER: nikitha            # Your PostgreSQL username
+          POSTGRES_PASSWORD: 123456          # Your PostgreSQL password
         ports:
-          - 5432:5432
+          - 5432:5432                       # Expose the port
         options: >-
-          --health-cmd="pg_isready -U $POSTGRES_USER"  
+          --health-cmd="pg_isready -U nikitha" 
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
+
     env:
       DB_HOST: localhost
-      DB_USER: ${{ secrets.POSTGRES_USERNAME }}
-      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+      DB_USER: nikitha
+      DB_PASSWORD: 123456
+      DB_NAME: webapp
       DB_PORT: 5432
       NODE_ENV: test
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Install dependencies
         run: npm install
+
       - name: Wait for PostgreSQL to be ready
         run: |
           for i in {1..30}; do
-            if pg_isready -h localhost -U nikitha"; then
+            if pg_isready -h localhost -U nikitha; then
               echo "PostgreSQL is ready!"
               exit 0
             fi
@@ -44,5 +51,13 @@ jobs:
           done
           echo "PostgreSQL did not become ready in time!"
           exit 1
+
       - name: Run Tests
         run: npm test
+        env:
+          DB_HOST: localhost
+          DB_USER: nikitha
+          DB_PASSWORD: 123456
+          DB_NAME: webapp
+          DB_PORT: 5432
+          NODE_ENV: test
