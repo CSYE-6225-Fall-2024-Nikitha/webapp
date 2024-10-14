@@ -41,5 +41,5 @@ jobs:
             -var "vpc_id=${{ secrets.VPC_ID }}" \
             -var "subnet_id=${{ secrets.SUBNET_ID }}" \
             -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
-            -var "ssh_timeout=${{ secrets.SSH_TIMEOUT }}" \
+            -var "ssh_timeout=10m" \
             packer-template.pkr.hcl
