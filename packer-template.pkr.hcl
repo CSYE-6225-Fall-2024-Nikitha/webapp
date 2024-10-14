@@ -7,7 +7,6 @@ packer {
   }
 }
 
-# Declare all variables for the Packer template
 variable "aws_region" {
   description = "The AWS region to use for the build"
   type        = string
