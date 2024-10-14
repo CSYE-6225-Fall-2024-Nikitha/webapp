@@ -49,17 +49,17 @@ variable "ssh_timeout" {
 }
 
 source "amazon-ebs" "my-ami" {
-  ami_name       = var.ami_name
+  ami_name        = var.ami_name
   ami_description = var.ami_description
-  instance_type  = "t2.micro"
-  source_ami     = var.source_ami
-  region         = var.aws_region
-  subnet_id      = var.subnet_id
-  vpc_id         = var.vpc_id
-  ssh_username   = var.ssh_username
-  ssh_timeout    = var.ssh_timeout
+  instance_type   = "t2.micro"
+  source_ami      = var.source_ami
+  region          = var.aws_region
+  subnet_id       = var.subnet_id
+  vpc_id          = var.vpc_id
+  ssh_username    = var.ssh_username
+  ssh_timeout     = var.ssh_timeout
 }
 
 build {
-  sources = ["source.amazon-ebs.my-ami"]  
+  sources = ["source.amazon-ebs.my-ami"]
 }
