@@ -1,4 +1,4 @@
-name: Integration Test Workflow
+name: Integration Test Workflow for webapp
 
 on:
   pull_request_target:
