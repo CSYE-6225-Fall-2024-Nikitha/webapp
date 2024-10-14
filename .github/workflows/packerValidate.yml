@@ -27,6 +27,14 @@ jobs:
       - name: Run packer fmt
         run: |
           packer fmt -check .
+      - name: Debug Secrets
+        run: |
+          echo "AWS Region: ${{ secrets.AWS_REGION }}"
+          echo "AMI Name: ${{ secrets.AMI_NAME }}"
+          echo "Source AMI: ${{ secrets.SOURCE_AMI }}"
+          echo "SSH Username: ${{ secrets.SSH_USERNAME }}"
+          echo "VPC ID: ${{ secrets.VPC_ID }}"
+          echo "Subnet ID: ${{ secrets.SUBNET_ID }}"
 
       - name: Run packer validate
         env:  
