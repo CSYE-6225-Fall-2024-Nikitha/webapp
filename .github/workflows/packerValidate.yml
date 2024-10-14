@@ -38,7 +38,6 @@ jobs:
             -var "ami_name=${{ secrets.AMI_NAME }}" \
             -var "source_ami=${{ secrets.SOURCE_AMI }}" \
             -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
-            -var "profile=${{ secrets.PROFILE }}" \
             -var "vpc_id=${{ secrets.VPC_ID }}" \
             -var "subnet_id=${{ secrets.SUBNET_ID }}" \
             -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
