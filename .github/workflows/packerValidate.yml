@@ -7,8 +7,7 @@ on:
   pull_request:
     branches:
       - main
-env:
-  PRODUCT_VERSION: 1.10.0
+
 jobs:
   packer-check:
     runs-on: ubuntu-latest
@@ -19,7 +18,7 @@ jobs:
         uses: hashicorp/setup-packer@main
         id: setup
         with:
-          version: ${{ env.PRODUCT_VERSION }}
+          version: latest
       - name: Run packer init
         run: packer init .
       - name: Run packer fmt
