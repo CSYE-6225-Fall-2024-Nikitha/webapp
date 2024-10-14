@@ -1,53 +1,53 @@
-name: Packer Status Check
+# name: Packer Status Check
 
-on:
-  pull_request:
-    branches:
-      - main  
-env:
-  PRODUCT_VERSION: "1.10.0" 
+# on:
+#   pull_request:
+#     branches:
+#       - main  
+# env:
+#   PRODUCT_VERSION: "1.10.0" 
 
-jobs:
-  packer-check:
-    runs-on: ubuntu-latest
+# jobs:
+#   packer-check:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
 
-      - name: Set up Packer
-        uses: hashicorp/setup-packer@main
-        id: setup
-        with:
-          version: ${{ env.PRODUCT_VERSION }}  
+#       - name: Set up Packer
+#         uses: hashicorp/setup-packer@main
+#         id: setup
+#         with:
+#           version: ${{ env.PRODUCT_VERSION }}  
 
-      - name: Run packer init
-        run: "packer init ."
+#       - name: Run packer init
+#         run: "packer init ."
       
-      - name: Run packer fmt
-        run: |
-          packer fmt -check .
-      - name: Debug Secrets
-        run: |
-          echo "AWS Region: ${{ secrets.AWS_REGION }}"
-          echo "AMI Name: ${{ secrets.AMI_NAME }}"
-          echo "Source AMI: ${{ secrets.SOURCE_AMI }}"
-          echo "SSH Username: ${{ secrets.SSH_USERNAME }}"
-          echo "VPC ID: ${{ secrets.VPC_ID }}"
-          echo "Subnet ID: ${{ secrets.SUBNET_ID }}"
+#       - name: Run packer fmt
+#         run: |
+#           packer fmt -check .
+#       - name: Debug Secrets
+#         run: |
+#           echo "AWS Region: ${{ secrets.AWS_REGION }}"
+#           echo "AMI Name: ${{ secrets.AMI_NAME }}"
+#           echo "Source AMI: ${{ secrets.SOURCE_AMI }}"
+#           echo "SSH Username: ${{ secrets.SSH_USERNAME }}"
+#           echo "VPC ID: ${{ secrets.VPC_ID }}"
+#           echo "Subnet ID: ${{ secrets.SUBNET_ID }}"
 
-      - name: Run packer validate
-        env:  
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
-        run: |
-           packer build \
-            -var "aws_region=${{ secrets.AWS_REGION }}" \
-            -var "ami_name=${{ secrets.AMI_NAME }}" \
-            -var "source_ami=${{ secrets.SOURCE_AMI }}" \
-            -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
-            -var "vpc_id=${{ secrets.VPC_ID }}" \
-            -var "subnet_id=${{ secrets.SUBNET_ID }}" \
-            -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
-            -var "ssh_timeout=10m" \
-            packer-template.pkr.hcl
+#       - name: Run packer validate
+#         env:  
+#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
+#         run: |
+#            packer build \
+#             -var "aws_region=${{ secrets.AWS_REGION }}" \
+#             -var "ami_name=${{ secrets.AMI_NAME }}" \
+#             -var "source_ami=${{ secrets.SOURCE_AMI }}" \
+#             -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
+#             -var "vpc_id=${{ secrets.VPC_ID }}" \
+#             -var "subnet_id=${{ secrets.SUBNET_ID }}" \
+#             -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
+#             -var "ssh_timeout=10m" \
+#             packer-template.pkr.hcl
