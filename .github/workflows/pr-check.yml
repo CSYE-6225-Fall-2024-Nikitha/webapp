@@ -1,8 +1,10 @@
 name: Integration Test Workflow
+
 env:
-    POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
-    POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
-    POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  
+  POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
+  POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
 on:
   pull_request:
     branches:
@@ -18,10 +20,11 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U $POSTGRES_USER" 
+          --health-cmd="pg_isready -U $POSTGRES_USER"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
+
     env:
       DB_HOST: localhost
       DB_USER: $POSTGRES_USER
@@ -33,7 +36,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-          
+
+      - name: Log Environment Variables
+        run: |
+          echo "DB_HOST=$DB_HOST"
+          echo "DB_USER=$DB_USER"
+          echo "DB_PASSWORD=$DB_PASSWORD"
+          echo "DB_NAME=$DB_NAME"
+          echo "DB_PORT=$DB_PORT"
+          echo "NODE_ENV=$NODE_ENV"
+
       - name: Install dependencies
         run: npm install
 
@@ -49,6 +61,7 @@ jobs:
           done
           echo "PostgreSQL did not become ready in time!"
           exit 1
+
       - name: Run Tests
         run: npm test
         env:
