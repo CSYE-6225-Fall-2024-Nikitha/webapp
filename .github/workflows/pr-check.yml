@@ -1,4 +1,8 @@
 name: Integration Test Workflow
+env:
+    POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
+    POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
+    POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  
 on:
   pull_request:
     branches:
@@ -11,10 +15,6 @@ jobs:
     services:
       postgres:
         image: postgres:14
-        env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
-          POSTGRES_PASSWORD: 123456 # Use secret for password
         ports:
           - 5432:5432
         options: >-
@@ -24,22 +24,16 @@ jobs:
           --health-retries=10
     env:
       DB_HOST: localhost
-      DB_USER: ${{ secrets.POSTGRES_USERNAME }}
-      DB_PASSWORD: 123456  # Use secret for password
-      DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+      DB_USER: $POSTGRES_USER
+      DB_PASSWORD: $POSTGRES_PASSWORD
+      DB_NAME: $POSTGRES_DB
       DB_PORT: 5432
       NODE_ENV: test
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Log Environment Variables
-        run: |
-          echo "DB_USER=${{ secrets.POSTGRES_USERNAME }}"
-          echo "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}"
-          echo "DB_NAME=${{ secrets.POSTGRES_DATABASE }}"
-
+          
       - name: Install dependencies
         run: npm install
 
@@ -59,8 +53,8 @@ jobs:
         run: npm test
         env:
           DB_HOST: localhost
-          DB_USER: ${{ secrets.POSTGRES_USERNAME }}
-          DB_PASSWORD: 123456  # Use secret for password
-          DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+          DB_USER: $POSTGRES_USER
+          DB_PASSWORD: $POSTGRES_PASSWORD
+          DB_NAME: $POSTGRES_DB
           DB_PORT: 5432
           NODE_ENV: test
