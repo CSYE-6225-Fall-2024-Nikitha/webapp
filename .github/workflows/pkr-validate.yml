@@ -35,6 +35,9 @@ jobs:
         shell: bash
         continue-on-error: false
 
+      - name: Run packer init
+        run: packer init .
+
       # Step 5: Configure AWS Credentials (if needed)
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
