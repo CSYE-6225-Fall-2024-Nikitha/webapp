@@ -30,7 +30,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U $POSTGRES_USER"
+          --health-cmd="pg_isready -U nikitha"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
@@ -47,14 +47,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log Environment Variables
-        run: |
-          echo "DB_HOST=$DB_HOST"
-          echo "DB_USER=$DB_USER"
-          echo "DB_PASSWORD=$DB_PASSWORD"
-          echo "DB_NAME=$DB_NAME"
-          echo "DB_PORT=$DB_PORT"
-          echo "NODE_ENV=$NODE_ENV"
 
       - name: Install dependencies
         run: npm install
