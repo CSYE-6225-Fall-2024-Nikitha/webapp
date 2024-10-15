@@ -20,6 +20,13 @@ jobs:
     services:
       postgres:
         image: postgres:14
+        env:
+  # POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
+  # POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
+  # POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: webapp               # The name of your database
+          POSTGRES_USER: nikitha            # Your PostgreSQL username
+          POSTGRES_PASSWORD: 123456 
         ports:
           - 5432:5432
         options: >-
