@@ -9,6 +9,8 @@ on:
   pull_request:
     branches:
       - main
+env:
+  PRODUCT_VERSION: "1.10.0" # or: "latest"
 
 jobs:
   packer-check:
@@ -21,9 +23,10 @@ jobs:
 
       # Step 2: Set up Packer
       - name: Set up Packer
-        uses: hashicorp/setup-packer@v1
+        uses: hashicorp/setup-packer@main
+        id: setup
         with:
-          version: latest
+          version: ${{ env.PRODUCT_VERSION }}
 
       # Step 3: Run Packer init
       - name: Run packer init
