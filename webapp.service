@@ -1,0 +1,19 @@
+[Unit]
+Description=Web Application Service
+After=network.target
+Wants=cloud-init.target
+
+[Service]
+User=csye6225
+Group=csye6225
+Restart=always
+RestartSec=15
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=webapp
+Environment="CREDENTIALS=/tmp/credentials_file.json"
+WorkingDirectory=/home/packer/webapp
+ExecStart=/usr/bin/node /home/packer/webapp/src/index.js
+
+[Install]
+WantedBy=multi-user.target

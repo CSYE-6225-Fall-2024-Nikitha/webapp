@@ -61,4 +61,40 @@ source "amazon-ebs" "my-ami" {
 
 build {
   sources = ["source.amazon-ebs.my-ami"]
+
+  provisioner "shell" {
+    script = "./installDependencies.sh"
+  }
+
+  provisioner "shell" {
+    script = "./setDataBase.sh"
+  }
+
+  provisioner "file" {
+    source      = "${var.project_path}"
+    destination = "/home/packer/webapp.zip"
+  }
+
+  provisioner "file" {
+    source      = "${var.credentials_file}"
+    destination = "/tmp/credentials_file.json"
+  }
+
+  provisioner "file" {
+    source      = "webapp.service"
+    destination = "/tmp/webapp.service"
+  }
+
+  provisioner "file" {
+    source      = "webapp.path"
+    destination = "/tmp/webapp.path"
+  }
+
+  provisioner "shell" {
+    script = "./setWebApp.sh"
+  }
+
+  provisioner "shell" {
+    script = "./startWebApp.sh"
+  }
 }
