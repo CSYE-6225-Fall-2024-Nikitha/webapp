@@ -1,7 +1,7 @@
-name: Integration Test Workflow for webapp
+name: Integration Test Workflow
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
 
@@ -19,7 +19,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USERNAME }}"
+          --health-cmd="pg_isready -U ${POSTGRES_USER}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
