@@ -28,12 +28,7 @@ jobs:
         with:
           version: ${{ env.PRODUCT_VERSION }}
 
-      # Step 3: Run Packer init
-      - name: Run packer init
-        run: packer init .
-
       # Step 4: Run Packer fmt
-      # The workflow will fail if the fmt command modifies the template
       - name: Run packer fmt
         run: |
           packer fmt -check .
