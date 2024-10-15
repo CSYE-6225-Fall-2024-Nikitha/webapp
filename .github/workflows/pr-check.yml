@@ -1,12 +1,9 @@
 name: Integration Test Workflow
 
 env:
-  # POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
-  # POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
-  # POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   POSTGRES_DB: webapp               # The name of your database
   POSTGRES_USER: nikitha            # Your PostgreSQL username
-  POSTGRES_PASSWORD: 123456 
+  POSTGRES_PASSWORD: 123456         # Your PostgreSQL password
 
 on:
   pull_request:
@@ -21,25 +18,22 @@ jobs:
       postgres:
         image: postgres:14
         env:
-  # POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
-  # POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
-  # POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: webapp               # The name of your database
-          POSTGRES_USER: nikitha            # Your PostgreSQL username
-          POSTGRES_PASSWORD: 123456 
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}               # Referencing environment variables
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}           # Correct interpolation
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}   # Correct interpolation
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U nikitha"
+          --health-cmd="pg_isready -U ${{ env.POSTGRES_USER }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
 
     env:
       DB_HOST: localhost
-      DB_USER: $POSTGRES_USER
-      DB_PASSWORD: $POSTGRES_PASSWORD
-      DB_NAME: $POSTGRES_DB
+      DB_USER: ${{ env.POSTGRES_USER }}          # Referencing environment variables correctly
+      DB_PASSWORD: ${{ env.POSTGRES_PASSWORD }}  # Referencing environment variables correctly
+      DB_NAME: ${{ env.POSTGRES_DB }}            # Referencing environment variables correctly
       DB_PORT: 5432
       NODE_ENV: test
 
@@ -47,14 +41,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-
       - name: Install dependencies
         run: npm install
 
       - name: Wait for PostgreSQL to be ready
         run: |
           for i in {1..30}; do
-            if pg_isready -h localhost -U $DB_USER; then
+            if pg_isready -h localhost -U ${{ env.DB_USER }}; then
               echo "PostgreSQL is ready!"
               exit 0
             fi
@@ -68,8 +61,8 @@ jobs:
         run: npm test
         env:
           DB_HOST: localhost
-          DB_USER: $POSTGRES_USER
-          DB_PASSWORD: $POSTGRES_PASSWORD
-          DB_NAME: $POSTGRES_DB
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          DB_NAME: ${{ env.DB_NAME }}
           DB_PORT: 5432
           NODE_ENV: test
