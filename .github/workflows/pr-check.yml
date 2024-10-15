@@ -1,9 +1,9 @@
 name: Integration Test Workflow
 
 env:
-  POSTGRES_DB: webapp               # The name of your database
-  POSTGRES_USER: nikitha            # Your PostgreSQL username
-  POSTGRES_PASSWORD: 123456         # Your PostgreSQL password
+  POSTGRES_DB: webapp
+  POSTGRES_USER: nikitha
+  POSTGRES_PASSWORD: 123456
 
 on:
   pull_request:
@@ -18,9 +18,9 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}               # Referencing environment variables
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}           # Correct interpolation
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}   # Correct interpolation
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
@@ -31,9 +31,9 @@ jobs:
 
     env:
       DB_HOST: localhost
-      DB_USER: ${{ env.POSTGRES_USER }}          # Referencing environment variables correctly
-      DB_PASSWORD: ${{ env.POSTGRES_PASSWORD }}  # Referencing environment variables correctly
-      DB_NAME: ${{ env.POSTGRES_DB }}            # Referencing environment variables correctly
+      DB_USER: ${{ env.POSTGRES_USER }}
+      DB_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+      DB_NAME: ${{ env.POSTGRES_DB }}
       DB_PORT: 5432
       NODE_ENV: test
 
@@ -63,6 +63,3 @@ jobs:
           DB_HOST: localhost
           DB_USER: ${{ env.DB_USER }}
           DB_PASSWORD: ${{ env.DB_PASSWORD }}
-          DB_NAME: ${{ env.DB_NAME }}
-          DB_PORT: 5432
-          NODE_ENV: test
