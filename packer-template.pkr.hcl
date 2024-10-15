@@ -25,7 +25,7 @@ variable "source_ami" {
 variable "ssh_username" {
   description = "SSH username for the instance"
   type        = string
-
+}
 
 variable "vpc_id" {
   description = "The ID of the VPC to use for the instances"
