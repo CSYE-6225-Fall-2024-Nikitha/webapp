@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  connect-postgres:
+  test:
     runs-on: ubuntu-latest
 
     services:
