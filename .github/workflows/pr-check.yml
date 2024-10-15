@@ -1,26 +1,21 @@
 name: Integration Test Workflow
 
-env:
-  POSTGRES_DB: webapp
-  POSTGRES_USER: nikitha
-  POSTGRES_PASSWORD: 123456
-
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  test:
+  connect-postgres:
     runs-on: ubuntu-latest
 
     services:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }} # Use secrets for sensitive info
-          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }} # Use secrets for sensitive info
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }} # Use secrets for sensitive info
+          POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
@@ -47,7 +42,7 @@ jobs:
       - name: Wait for PostgreSQL to be ready
         run: |
           for i in {1..30}; do
-            if pg_isready -h localhost -U nikitha; then
+            if pg_isready -h localhost -U ${{ secrets.POSTGRES_USERNAME }}; then
               echo "PostgreSQL is ready!"
               exit 0
             fi
@@ -65,3 +60,4 @@ jobs:
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
           DB_PORT: 5432
+          NODE_ENV: test

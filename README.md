@@ -8,7 +8,7 @@ Before you begin, ensure you have the following installed:-
 
 1. **Node.js** (v14 or higher)
 2. **PostgreSQL** (v12 or higher)
-3. **npm** (Node package manager, usually included with Node.js)
+3. **npm** (Node package manager, included with Node.js)
 4. **Git VCS** (for version control)
 
 ## Getting Started
