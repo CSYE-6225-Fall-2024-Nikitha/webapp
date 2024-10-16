@@ -7,7 +7,7 @@ sudo apt install -y postgresql postgresql-contrib
 
 sudo systemctl start postgresql
 
-sudo -u postgres psql -c "ALTER USER  PASSWORD '$DB_PASSWORD';"
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$DB_PASSWORD';"
 
 sudo -u postgres psql -c "DROP DATABASE IF EXISTS $DB_NAME;"
 
