@@ -1,24 +1,20 @@
+---
 name: Packer Build Workflow
-
 on:
   pull_request:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Packer
         uses: hashicorp/setup-packer@main
         id: setup
         with:
           version: ${{ env.PRODUCT_VERSION }}
-
       - name: Run packer validate
         run: |
           packer validate \
@@ -35,4 +31,7 @@ jobs:
             -var "DB_HOST=${{ secrets.POSTGRES_HOST }}" \
             -var "DB_USER=${{ secrets.POSTGRES_USERNAME }}" \
             -var "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
-            -var "DB_NAME=${{ secrets.POSTGRES_DATA
+            -var "DB_NAME=${{ secrets.POSTGRES_DATABASE }}" \
+            -var "DB_PORT=${{ secrets.POSTGRES_PORT }}" \
+            -var "DB_DIALECT=${{ secrets.POSTGRES_DIALECT }}" \
+            packer-template.pkr.hcl
