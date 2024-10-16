@@ -41,16 +41,10 @@ jobs:
         id: zip
 
       - name: Set project path
-        run: echo "WEBAPP_ZIP_PATH=${{ github.workspace }}/webapp.zip" >> $GITHUB_ENV
+        run: echo "ZIP_PATH=${{ github.workspace }}/webapp.zip" >> $GITHUB_ENV
 
-      - name: Print WEBAPP_ZIP_PATH
-        run: echo "WEBAPP_ZIP_PATH=${{ env.WEBAPP_ZIP_PATH }}"
-
-      - name: List contents of the directory
-        run: |
-          cd ${{ github.workspace }}/webapp  # Ensure correct directory path
-          ls -la
-
+      - name: Print zip path
+        run: echo "ZIP_PATH=${{ env.WEBAPP_ZIP_PATH }}"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
