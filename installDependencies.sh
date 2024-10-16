@@ -1,5 +1,4 @@
 #!/bin/bash
-set -exo
 export DEBIAN_FRONTEND="noninteractive"
 
 

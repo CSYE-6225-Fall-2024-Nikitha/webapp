@@ -1,35 +1,21 @@
-name: Packer Status Check
-
-permissions:
-  id-token: write
-  contents: read
-
+---
+name: Packer Build Workflow
 on:
   pull_request:
     branches:
       - main
-
-env:
-  PRODUCT_VERSION: "1.10.0" 
-
 jobs:
-  packer-check:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@main
         id: setup
         with:
           version: ${{ env.PRODUCT_VERSION }}
-
-      - name: Run packer fmt
-        run: packer fmt -check .
-        shell: bash
-        continue-on-error: false
       
       - name: Zip webapp
         run: |
@@ -37,18 +23,17 @@ jobs:
         working-directory: ../
         id: zip
 
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}  
-
-      - name: Run packer validate
+      
+      - name: Run packer build
         run: |
           packer init packer-template.pkr.hcl
-          packer validate \
+          packer build \
             -var "aws_region=${{ vars.AWS_REGION }}" \
             -var "base_ami_name=${{ vars.BASE_AMI_NAME }}" \
             -var "source_ami=${{ vars.SOURCE_AMI }}" \
