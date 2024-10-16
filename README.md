@@ -4,7 +4,7 @@
 This project implements a Health Check API, followed by User creation API as part of a cloud-native web application assignment. The API checks the health of the application by verifying the connection to the PostgreSQL database and responds accordingly.The User API creates user, fetches and updates user
 
 ## Prerequisites
-Before you begin, ensure you have the following installed:-
+Before you begin, ensure you have following installed:-
 
 1. **Node.js** (v14 or higher)
 2. **PostgreSQL** (v12 or higher)

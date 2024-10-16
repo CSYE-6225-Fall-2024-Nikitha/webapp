@@ -2,6 +2,10 @@
 
 # Exit immediately if a command exits with a non-zero status
 sudo -i
+cd ../
+cd ../
+cd ../
+cd ../
 
 # Update the package lists
 echo "Updating package lists..."
@@ -25,22 +29,19 @@ pwd
 echo "Creating .env file..."
 
 # Create the .env file with sudo
-sudo touch /home/ubuntu/webapp/.env
+sudo tee /home/ubuntu/webapp/.env <<EOF
+DB_HOST=${DB_HOST}
+DB_USER=${DB_USER}
+DB_PASSWORD=${DB_PASSWORD}
+DB_NAME=${DB_NAME}
+DB_PORT=${DB_PORT}
+DB_DIALECT=${DB_DIALECT}
+EOF
 
-echo "DB_HOST=${DB_HOST}" | sudo tee -a /home/ubuntu/webapp/.env
-echo "DB_USER=${DB_USER}" | sudo tee -a /home/ubuntu/webapp/.env
-echo "DB_PASSWORD=${DB_PASSWORD}" | sudo tee -a /home/ubuntu/webapp/.env
-echo "DB_NAME=${DB_NAME}" | sudo tee -a /home/ubuntu/webapp/.env
-echo "DB_PORT=${DB_PORT}" | sudo tee -a /home/ubuntu/webapp/.env
-echo "DB_DIALECT=${DB_DIALECT}" | sudo tee -a /home/ubuntu/webapp/.env
 
 
 ls /home/ubuntu/webapp/
 
-
-# Install npm packages
-echo "Installing npm packages..."
-sudo npm install 
 
 # Change ownership and permissions for the webapp directory
 echo "Setting permissions and ownership..."
@@ -49,6 +50,10 @@ sudo chmod 755 /home/ubuntu
 sudo chmod -R 755 /home/ubuntu/webapp
 ls -la /home/ubuntu/webapp/src
 ls -la /home/ubuntu/webapp/
+
+# Install npm packages
+echo "Installing npm packages..."
+sudo npm install 
 
 # Move the webapp service file to systemd directory if it exists
 if [ -f /tmp/webapp.service ]; then

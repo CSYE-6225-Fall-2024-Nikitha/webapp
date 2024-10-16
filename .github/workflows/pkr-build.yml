@@ -1,12 +1,19 @@
 ---
 name: Packer Build Workflow
 on:
-  pull_request:
+  push:
     branches:
       - main
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DB_HOST: ${{ secrets.POSTGRES_HOST}}
+      DB_USER: ${{ secrets.POSTGRES_USERNAME }}
+      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
+      DB_PORT: ${{ secrets.POSTGRES_PORT }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
