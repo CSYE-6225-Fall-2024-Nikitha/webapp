@@ -52,7 +52,7 @@ jobs:
 
       - name: Run packer validate
         run: |
-          packer init packer.pkr.hcl
+          packer init packer-template.pkr.hcl
           packer validate \
             -var "aws_region=${{ vars.AWS_REGION }}" \
             -var "base_ami_name=${{ vars.BASE_AMI_NAME }}" \
