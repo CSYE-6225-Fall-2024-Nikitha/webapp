@@ -91,6 +91,11 @@ variable "DB_DIALECT" {
   type        = string
 }
 
+variable "instance_type" {
+  description = "The type of EC2 instance to use for the build"
+  type        = string
+}
+
 source "amazon-ebs" "my-ami" {
   ami_name        = local.ami_name
   ami_description = "Custom AMI created on ${formatdate("YYYYMMDD-HHMMss", timestamp())}"
