@@ -10,11 +10,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up Packer
         uses: hashicorp/setup-packer@main
         id: setup
         with:
           version: ${{ env.PRODUCT_VERSION }}
+      
+      - name: Zip webapp
+        run: |
+          zip -r webapp.zip .
+        working-directory: ../
+        id: zip
+
+      - name: Set project path
+        run: echo "ZIP_PATH=${{ github.workspace }}/webapp.zip" >> $GITHUB_ENV
+
+      - name: Print zip path
+        run: echo "ZIP_PATH=${{ env.WEBAPP_ZIP_PATH }}"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}  
+      
       - name: Run packer build
         run: |
           packer init packer-template.pkr.hcl

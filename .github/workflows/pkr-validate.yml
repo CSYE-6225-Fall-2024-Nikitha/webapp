@@ -30,9 +30,6 @@ jobs:
         run: packer fmt -check .
         shell: bash
         continue-on-error: false
-
-      - name: Run packer init
-        run: packer init .
       
       - name: Zip webapp
         run: |
@@ -55,6 +52,7 @@ jobs:
 
       - name: Run packer validate
         run: |
+          packer init packer.pkr.hcl
           packer validate \
             -var "aws_region=${{ vars.AWS_REGION }}" \
             -var "base_ami_name=${{ vars.BASE_AMI_NAME }}" \
