@@ -23,7 +23,7 @@ describe('User Creation and Health Check Integration Tests', () => {
     describe('User Creation Tests', () => {
         it('should create a user successfully', async () => {
             const userData = {
-                email: `bigdata-${Date.now()}@example.com`,
+                email: `bigdata-${Date.now()}`,
                 first_name: 'John',
                 last_name: 'Doe',
                 password: 'password123'
