@@ -56,11 +56,6 @@ variable "project_path" {
   type        = string
 }
 
-variable "credentials_file" {
-  description = "The local path to the credentials file"
-  type        = string
-}
-
 variable "DB_HOST" {
   description = "Database Host"
   type        = string
