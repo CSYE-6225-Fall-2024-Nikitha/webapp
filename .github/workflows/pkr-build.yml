@@ -15,9 +15,10 @@ jobs:
         id: setup
         with:
           version: ${{ env.PRODUCT_VERSION }}
-      - name: Run packer validate
+      - name: Run packer build
         run: |
-          packer validate \
+          packer init packer-template.pkr.hcl
+          packer build \
             -var "aws_region=${{ secrets.AWS_REGION }}" \
             -var "base_ami_name=${{ secrets.BASE_AMI_NAME }}" \
             -var "source_ami=${{ secrets.SOURCE_AMI }}" \
