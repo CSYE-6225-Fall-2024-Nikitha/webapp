@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit immediately if a command exits with a non-zero status
-set -e
+sudo -i
 
 # Update the package lists
 echo "Updating package lists..."
@@ -13,7 +13,7 @@ sudo apt-get install -y unzip
 
 # Unzip the webapp.zip file to the specified directory
 echo "Unzipping the webapp.zip file..."
-sudo unzip -o /home/ubuntu/webapp.zip -d /home/ubuntu/webapp
+sudo unzip -o /home/ubuntu/webapp.zip -d /home/ubuntu/
 
 # Change to the webapp directory
 cd /home/ubuntu/webapp || { echo "Failed to change directory to /home/ubuntu/webapp"; exit 1; }
@@ -35,14 +35,20 @@ echo "DB_PORT=${DB_PORT}" | sudo tee -a /home/ubuntu/webapp/.env
 echo "DB_DIALECT=${DB_DIALECT}" | sudo tee -a /home/ubuntu/webapp/.env
 
 
+ls /home/ubuntu/webapp/
+
+
+# Install npm packages
+echo "Installing npm packages..."
+sudo npm install 
 
 # Change ownership and permissions for the webapp directory
 echo "Setting permissions and ownership..."
 sudo chown -R csye6225:csye6225 /home/ubuntu/webapp
+sudo chmod 755 /home/ubuntu
 sudo chmod -R 755 /home/ubuntu/webapp
-# Install npm packages
-echo "Installing npm packages..."
-sudo npm install 
+ls -la /home/ubuntu/webapp/src
+ls -la /home/ubuntu/webapp/
 
 # Move the webapp service file to systemd directory if it exists
 if [ -f /tmp/webapp.service ]; then
