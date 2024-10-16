@@ -20,14 +20,18 @@ cd /home/ubuntu/webapp || { echo "Failed to change directory to /home/ubuntu/web
 
 # Create the .env file with database configurations
 echo "Creating .env file..."
-cat <<EOL > .env
-DB_HOST=${DB_HOST}
-DB_USER=${DB_USER}
-DB_PASSWORD=${DB_PASSWORD}
-DB_NAME=${DB_NAME}
-DB_PORT=${DB_PORT}
-DB_DIALECT=${DB_DIALECT}
-EOL
+
+# Create the .env file with sudo
+sudo touch /home/ubuntu/webapp/.env
+
+echo "DB_HOST=${DB_HOST}" | sudo tee -a /home/ubuntu/webapp/.env
+echo "DB_USER=${DB_USER}" | sudo tee -a /home/ubuntu/webapp/.env
+echo "DB_PASSWORD=${DB_PASSWORD}" | sudo tee -a /home/ubuntu/webapp/.env
+echo "DB_NAME=${DB_NAME}" | sudo tee -a /home/ubuntu/webapp/.env
+echo "DB_PORT=${DB_PORT}" | sudo tee -a /home/ubuntu/webapp/.env
+echo "DB_DIALECT=${DB_DIALECT}" | sudo tee -a /home/ubuntu/webapp/.env
+
+
 
 # Change ownership and permissions for the webapp directory
 echo "Setting permissions and ownership..."
