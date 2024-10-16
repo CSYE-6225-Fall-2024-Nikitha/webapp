@@ -12,5 +12,3 @@ sudo -u postgres psql -c "ALTER USER $DB_USER PASSWORD '$DB_PASSWORD';"
 sudo -u postgres psql -c "DROP DATABASE IF EXISTS $DB_NAME;"
 
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
-
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
