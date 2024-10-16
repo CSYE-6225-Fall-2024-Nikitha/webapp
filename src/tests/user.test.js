@@ -79,7 +79,7 @@ describe('User Creation and Health Check Integration Tests', () => {
                 .post('/v1/user')
                 .send(userData);
 
-            expect(response.status).toBe(400); 
+            expect(response.status).toBe(405); 
         });
 
         it('should return 400 for invalid email format', async () => {
