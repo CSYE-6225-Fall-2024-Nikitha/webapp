@@ -1,4 +1,4 @@
-# Health Check API
+# Health Check APIs
 
 ## Overview
 This project implements a Health Check API, followed by User creation API as part of a cloud-native web application assignment. The API checks the health of the application by verifying the connection to the PostgreSQL database and responds accordingly.The User API creates user, fetches and updates user
