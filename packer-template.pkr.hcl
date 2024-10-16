@@ -94,7 +94,7 @@ variable "DB_DIALECT" {
 source "amazon-ebs" "my-ami" {
   ami_name        = local.ami_name
   ami_description = "Custom AMI created on ${formatdate("YYYYMMDD-HHMMss", timestamp())}"
-  instance_type   = "t2.micro"
+  instance_type   = var.instance_type
   source_ami      = var.source_ami
   region          = var.aws_region
   subnet_id       = var.subnet_id
@@ -134,11 +134,6 @@ build {
   provisioner "file" {
     source      = "${var.project_path}"
     destination = "/home/ubuntu/webapp.zip"
-  }
-
-  provisioner "file" {
-    source      = "${var.credentials_file}"
-    destination = "/tmp/credentials_file.json"
   }
 
   provisioner "file" {
