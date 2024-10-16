@@ -19,20 +19,20 @@ jobs:
         run: |
           packer init packer-template.pkr.hcl
           packer build \
-            -var "aws_region=${{ secrets.AWS_REGION }}" \
-            -var "base_ami_name=${{ secrets.BASE_AMI_NAME }}" \
-            -var "source_ami=${{ secrets.SOURCE_AMI }}" \
-            -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
-            -var "vpc_id=${{ secrets.VPC_ID }}" \
-            -var "subnet_id=${{ secrets.SUBNET_ID }}" \
-            -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
-            -var "ssh_timeout=${{ secrets.SSH_TIMEOUT }}" \
-            -var "instance_type=${{ secrets.INSTANCE_TYPE }}" \
+            -var "aws_region=${{ vars.AWS_REGION }}" \
+            -var "base_ami_name=${{ vars.BASE_AMI_NAME }}" \
+            -var "source_ami=${{ vars.SOURCE_AMI }}" \
+            -var "ssh_username=${{ vars.SSH_USERNAME }}" \
+            -var "vpc_id=${{ vars.VPC_ID }}" \
+            -var "subnet_id=${{ vars.SUBNET_ID }}" \
+            -var "ami_description=${{ vars.AMI_DESCRIPTION }}" \
+            -var "ssh_timeout=${{ vars.SSH_TIMEOUT }}" \
+            -var "instance_type=${{ vars.INSTANCE_TYPE }}" \
             -var "project_path=/home/runner/work/webapp/webapp.zip" \
             -var "DB_HOST=${{ secrets.POSTGRES_HOST }}" \
             -var "DB_USER=${{ secrets.POSTGRES_USERNAME }}" \
             -var "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
             -var "DB_NAME=${{ secrets.POSTGRES_DATABASE }}" \
             -var "DB_PORT=${{ secrets.POSTGRES_PORT }}" \
-            -var "DB_DIALECT=${{ secrets.POSTGRES_DIALECT }}" \
+            -var "DB_DIALECT=${{ secrets.POSTGRES_DIALECT}}" \
             packer-template.pkr.hcl
