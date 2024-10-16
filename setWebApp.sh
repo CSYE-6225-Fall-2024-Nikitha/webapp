@@ -43,10 +43,6 @@ EOF
 ls /home/ubuntu/webapp/
 
 
-# Install npm packages
-echo "Installing npm packages..."
-sudo npm install 
-
 # Change ownership and permissions for the webapp directory
 echo "Setting permissions and ownership..."
 sudo chown -R csye6225:csye6225 /home/ubuntu/webapp
@@ -54,6 +50,10 @@ sudo chmod 755 /home/ubuntu
 sudo chmod -R 755 /home/ubuntu/webapp
 ls -la /home/ubuntu/webapp/src
 ls -la /home/ubuntu/webapp/
+
+# Install npm packages
+echo "Installing npm packages..."
+sudo npm install 
 
 # Move the webapp service file to systemd directory if it exists
 if [ -f /tmp/webapp.service ]; then

@@ -8,6 +8,7 @@ User=csye6225
 Group=csye6225
 Restart=always
 RestartSec=15
+EnvironmentFile=/home/ubuntu/webapp/.env
 WorkingDirectory=/home/ubuntu/webapp/src
 ExecStart=/usr/bin/node /home/ubuntu/webapp/src/index.js
 
