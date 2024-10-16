@@ -105,11 +105,11 @@ source "amazon-ebs" "my-ami" {
 
 build {
   sources = ["source.amazon-ebs.my-ami"]
-  
-   provisioner "shell" {
+
+  provisioner "shell" {
     inline = [
-      "sudo groupadd -r csye6225",  
-      "sudo useradd -r -g csye6225 -s /usr/sbin/nologin csye6225"  
+      "sudo groupadd -r csye6225",
+      "sudo useradd -r -g csye6225 -s /usr/sbin/nologin csye6225"
     ]
   }
 
@@ -118,17 +118,17 @@ build {
     script = "./installDependencies.sh"
   }
 
- provisioner "shell" {
-  environment_vars = [
-    "DB_HOST=${var.DB_HOST}",
-    "DB_USER=${var.DB_USER}",
-    "DB_PASSWORD=${var.DB_PASSWORD}",
-    "DB_NAME=${var.DB_NAME}",
-    "DB_PORT=${var.DB_PORT}",
-    "DB_DIALECT=${var.DB_DIALECT}"
-  ]
-  script = "./setDataBase.sh"
-}
+  provisioner "shell" {
+    environment_vars = [
+      "DB_HOST=${var.DB_HOST}",
+      "DB_USER=${var.DB_USER}",
+      "DB_PASSWORD=${var.DB_PASSWORD}",
+      "DB_NAME=${var.DB_NAME}",
+      "DB_PORT=${var.DB_PORT}",
+      "DB_DIALECT=${var.DB_DIALECT}"
+    ]
+    script = "./setDataBase.sh"
+  }
 
 
   provisioner "file" {
