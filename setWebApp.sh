@@ -17,6 +17,9 @@ sudo unzip -o /home/ubuntu/webapp.zip -d /home/ubuntu/webapp
 
 # Change to the webapp directory
 cd /home/ubuntu/webapp || { echo "Failed to change directory to /home/ubuntu/webapp"; exit 1; }
+pwd
+pwd
+pwd
 
 # Create the .env file with database configurations
 echo "Creating .env file..."
