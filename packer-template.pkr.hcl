@@ -12,9 +12,13 @@ variable "aws_region" {
   type        = string
 }
 
-variable "ami_name" {
-  description = "The name of the custom AMI to create"
+variable "base_ami_name" {
+  description = "The base name for the custom AMI"
   type        = string
+}
+
+locals {
+  ami_name = "${var.base_ami_name}-${formatdate("YYYYMMDD-HHMMss", timestamp())}"
 }
 
 variable "source_ami" {
@@ -47,9 +51,49 @@ variable "ssh_timeout" {
   type        = string
 }
 
+variable "project_path" {
+  description = "The local path to the web application project"
+  type        = string
+}
+
+variable "credentials_file" {
+  description = "The local path to the credentials file"
+  type        = string
+}
+
+variable "DB_HOST" {
+  description = "Database Host"
+  type        = string
+}
+
+variable "DB_USER" {
+  description = "Database User"
+  type        = string
+}
+
+variable "DB_PASSWORD" {
+  description = "Database Password"
+  type        = string
+}
+
+variable "DB_NAME" {
+  description = "Database Name"
+  type        = string
+}
+
+variable "DB_PORT" {
+  description = "Database Port"
+  type        = string
+}
+
+variable "DB_DIALECT" {
+  description = "Database Dialect"
+  type        = string
+}
+
 source "amazon-ebs" "my-ami" {
-  ami_name        = var.ami_name
-  ami_description = var.ami_description
+  ami_name        = local.ami_name
+  ami_description = "Custom AMI created on ${formatdate("YYYYMMDD-HHMMss", timestamp())}"
   instance_type   = "t2.micro"
   source_ami      = var.source_ami
   region          = var.aws_region
@@ -61,18 +105,35 @@ source "amazon-ebs" "my-ami" {
 
 build {
   sources = ["source.amazon-ebs.my-ami"]
+  
+   provisioner "shell" {
+    inline = [
+      "sudo groupadd -r csye6225",  
+      "sudo useradd -r -g csye6225 -s /usr/sbin/nologin csye6225"  
+    ]
+  }
+
 
   provisioner "shell" {
     script = "./installDependencies.sh"
   }
 
-  provisioner "shell" {
-    script = "./setDataBase.sh"
-  }
+ provisioner "shell" {
+  environment_vars = [
+    "DB_HOST=${var.DB_HOST}",
+    "DB_USER=${var.DB_USER}",
+    "DB_PASSWORD=${var.DB_PASSWORD}",
+    "DB_NAME=${var.DB_NAME}",
+    "DB_PORT=${var.DB_PORT}",
+    "DB_DIALECT=${var.DB_DIALECT}"
+  ]
+  script = "./setDataBase.sh"
+}
+
 
   provisioner "file" {
     source      = "${var.project_path}"
-    destination = "/home/packer/webapp.zip"
+    destination = "/home/ubuntu/webapp.zip"
   }
 
   provisioner "file" {
@@ -83,11 +144,6 @@ build {
   provisioner "file" {
     source      = "webapp.service"
     destination = "/tmp/webapp.service"
-  }
-
-  provisioner "file" {
-    source      = "webapp.path"
-    destination = "/tmp/webapp.path"
   }
 
   provisioner "shell" {

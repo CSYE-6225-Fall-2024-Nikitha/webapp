@@ -1,5 +1,7 @@
 #!/bin/bash
-set -e
+set -exo
+export DEBIAN_FRONTEND="noninteractive"
+
 
 sudo apt update -y
 sudo apt upgrade -y

@@ -1,8 +1,0 @@
-[Unit]
-Description=Watch for the web application startup script
-
-[Path]
-PathExists=/opt/startup-script.sh
-
-[Install]
-WantedBy=multi-user.target
