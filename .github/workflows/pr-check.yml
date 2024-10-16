@@ -18,6 +18,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
+
         options: >-
           --health-cmd="pg_isready -U ${POSTGRES_USER}"
           --health-interval=10s
@@ -25,11 +26,11 @@ jobs:
           --health-retries=10
 
     env:
-      DB_HOST: localhost
+      DB_HOST: ${{ secrets.POSTGRES_HOST}}
       DB_USER: ${{ secrets.POSTGRES_USERNAME }}
       DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
-      DB_PORT: 5432
+      DB_PORT: ${{ secrets.POSTGRES_PORT }}
       NODE_ENV: test
 
     steps:
@@ -55,9 +56,9 @@ jobs:
       - name: Run Tests
         run: npm test
         env:
-          DB_HOST: localhost
+          DB_HOST: ${{ secrets.POSTGRES_HOST}}
           DB_USER: ${{ secrets.POSTGRES_USERNAME }}
           DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
-          DB_PORT: 5432
+          DB_PORT: ${{ secrets.POSTGRES_PORT }}
           NODE_ENV: test

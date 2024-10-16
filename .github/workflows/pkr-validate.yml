@@ -1,6 +1,5 @@
 name: Packer Status Check
 
-# Permissions needed for the workflow
 permissions:
   id-token: write
   contents: read
@@ -9,54 +8,68 @@ on:
   pull_request:
     branches:
       - main
+
 env:
-  PRODUCT_VERSION: "1.10.0" # or: "latest"
+  PRODUCT_VERSION: "1.10.0" 
 
 jobs:
   packer-check:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up Packer
       - name: Set up Packer
         uses: hashicorp/setup-packer@main
         id: setup
         with:
           version: ${{ env.PRODUCT_VERSION }}
 
-      # Step 4: Run Packer fmt
       - name: Run packer fmt
-        run: |
-          packer fmt -check .
+        run: packer fmt -check .
         shell: bash
         continue-on-error: false
 
       - name: Run packer init
         run: packer init .
+      
+      - name: Zip webapp
+        run: |
+          zip -r webapp.zip .
+        working-directory: ../
+        id: zip
 
-      # Step 5: Configure AWS Credentials (if needed)
+      - name: Set project path
+        run: echo "ZIP_PATH=${{ github.workspace }}/webapp.zip" >> $GITHUB_ENV
+
+      - name: Print zip path
+        run: echo "ZIP_PATH=${{ env.WEBAPP_ZIP_PATH }}"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ vars.AWS_REGION }}  
 
-      # Step 6: Validate Packer template
-      # If this command fails, the PR cannot be merged
       - name: Run packer validate
         run: |
           packer validate \
-            -var "aws_region=${{ secrets.AWS_REGION }}" \
-            -var "ami_name=${{ secrets.AMI_NAME }}" \
-            -var "source_ami=${{ secrets.SOURCE_AMI }}" \
-            -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
-            -var "vpc_id=${{ secrets.VPC_ID }}" \
-            -var "subnet_id=${{ secrets.SUBNET_ID }}" \
-            -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
-            -var "ssh_timeout=10m" \
+            -var "aws_region=${{ vars.AWS_REGION }}" \
+            -var "base_ami_name=${{ vars.BASE_AMI_NAME }}" \
+            -var "source_ami=${{ vars.SOURCE_AMI }}" \
+            -var "ssh_username=${{ vars.SSH_USERNAME }}" \
+            -var "vpc_id=${{ vars.VPC_ID }}" \
+            -var "subnet_id=${{ vars.SUBNET_ID }}" \
+            -var "ami_description=${{ vars.AMI_DESCRIPTION }}" \
+            -var "ssh_timeout=${{ vars.SSH_TIMEOUT }}" \
+            -var "instance_type=${{ vars.INSTANCE_TYPE }}" \
+            -var "project_path=/home/runner/work/webapp/webapp.zip" \
+            -var "DB_HOST=${{ secrets.POSTGRES_HOST }}" \
+            -var "DB_USER=${{ secrets.POSTGRES_USERNAME }}" \
+            -var "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
+            -var "DB_NAME=${{ secrets.POSTGRES_DATABASE }}" \
+            -var "DB_PORT=${{ secrets.POSTGRES_PORT }}" \
+            -var "DB_DIALECT=${{ secrets.POSTGRES_DIALECT}}" \
             packer-template.pkr.hcl
