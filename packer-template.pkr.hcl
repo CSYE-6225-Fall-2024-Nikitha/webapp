@@ -94,6 +94,7 @@ variable "instance_type" {
 source "amazon-ebs" "my-ami" {
   ami_name        = local.ami_name
   ami_description = "Custom AMI created on ${formatdate("YYYYMMDD-HHMMss", timestamp())}"
+  ami_users       = ["920373022058", "120569613620"]
   instance_type   = var.instance_type
   source_ami      = var.source_ami
   region          = var.aws_region

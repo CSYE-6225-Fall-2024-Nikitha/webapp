@@ -1,4 +1,6 @@
 #!/bin/bash
+#remove git
+sudo apt-get remove git
 
 
 sudo systemctl daemon-reload
