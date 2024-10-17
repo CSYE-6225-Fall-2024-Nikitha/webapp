@@ -109,9 +109,9 @@ source "amazon-ebs" "my-ami" {
   }
 
   launch_block_device_mappings {
-    device_name = "/dev/sda1"
-    volume_size = 25
-    volume_type = "gp2"
+    device_name           = "/dev/sda1"
+    volume_size           = 25
+    volume_type           = "gp2"
     delete_on_termination = true
   }
 }
