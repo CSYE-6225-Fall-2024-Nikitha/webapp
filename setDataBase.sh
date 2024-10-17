@@ -1,9 +1,4 @@
 #!/bin/bash
-export DEBIAN_FRONTEND="noninteractive"
-sudo apt update
-apt-get install dialog apt-utils
-sudo apt-get install -y -q
-
 
 sudo apt install -y postgresql postgresql-contrib
 

@@ -91,10 +91,51 @@ variable "instance_type" {
   type        = string
 }
 
+variable ami_users {
+  description = "List of AWS user IDs to share AMIs with"
+  type        = list(string)
+  default     = ["920373022058", "120569613620"]
+}
+variable "aws_polling_delay_seconds" {
+  description = "The delay in seconds between each polling attempt for AWS resources."
+  type        = number
+  default     = 120
+}
+
+variable "aws_polling_max_attempts" {
+  description = "The maximum number of attempts to poll for AWS resources."
+  type        = number
+  default     = 30
+}
+
+variable "launch_device_name" {
+  description = "The device name for the root volume."
+  type        = string
+  default     = "/dev/sda1"
+}
+
+variable "launch_volume_size" {
+  description = "The size of the root volume in GB."
+  type        = number
+  default     = 25
+}
+
+variable "launch_volume_type" {
+  description = "The type of the root volume."
+  type        = string
+  default     = "gp2"
+}
+
+variable "launch_delete_on_termination" {
+  description = "Whether to delete the root volume on instance termination."
+  type        = bool
+  default     = true
+}
+
 source "amazon-ebs" "my-ami" {
   ami_name        = local.ami_name
   ami_description = "Custom AMI created on ${formatdate("YYYYMMDD-HHMMss", timestamp())}"
-  ami_users       = ["920373022058", "120569613620"]
+  ami_users       = var.ami_users
   instance_type   = var.instance_type
   source_ami      = var.source_ami
   region          = var.aws_region
@@ -104,15 +145,15 @@ source "amazon-ebs" "my-ami" {
   ssh_timeout     = var.ssh_timeout
 
   aws_polling {
-    delay_seconds = 120
-    max_attempts  = 30
+    delay_seconds = var.aws_polling_delay_seconds
+    max_attempts  = var.aws_polling_max_attempts
   }
 
   launch_block_device_mappings {
-    device_name           = "/dev/sda1"
-    volume_size           = 25
-    volume_type           = "gp2"
-    delete_on_termination = true
+    device_name           = var.launch_device_name
+    volume_size           = var.launch_volume_size
+    volume_type           = var.launch_volume_type
+    delete_on_termination = var.launch_delete_on_termination
   }
 }
 
