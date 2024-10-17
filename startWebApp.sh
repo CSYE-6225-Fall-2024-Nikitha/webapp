@@ -2,7 +2,7 @@
 
 
 #remove git
-sudo apt-get remove git
+sudo apt-get -y remove git
 
 
 sudo systemctl daemon-reload
