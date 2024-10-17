@@ -10,6 +10,8 @@ Before you begin, ensure you have following installed:-
 2. **PostgreSQL** (v12 or higher)
 3. **npm** (Node package manager, included with Node.js)
 4. **Git VCS** (for version control)
+5. **Packer** (for Custom AMI)
+6. **Terraform** (IaaC - infra setup)
 
 ## Getting Started
 
@@ -201,6 +203,70 @@ curl http://localhost:your_port/healthz
 - Perform tests for all USER API operations (like create, read, update, delete) using tools like Postman or curl.
 - Ensure that the database is set up automatically without executing any SQL scripts manually.
 
+## PACKER - FOR BUILDING CUSTOM  IMAGES
+
+**Building a Custom Application Image Using Packer**
+- This  will show how to use Packer to build a custom image for our application using Ubuntu 24.04 LTS as the base image. The custom image will include the necessary application dependencies, the database (MySQL/MariaDB/PostgreSQL), and configuration files.
+
+**Prerequisites**
+
+Before proceeding, ensure that you have the following setup:
+
+- Packer installed on your local machine.
+- AWS CLI configured with access to your DEV AWS account.
+- A VPC set up in your DEV AWS account.
+- Access to the repository where the Packer template will be stored alongside the web application code.
+
+**Steps to Build a Custom Image**
+- Install Packer:
+- create a packer/ directory to store your Packer template.
+- The template should include configurations for:
+- The Ubuntu 24.04 LTS base image.
+- Installing MySQL, MariaDB, or PostgreSQL locally on the image.
+- Installing all necessary dependencies for the web application (e.g., Java, Python, Tomcat, etc.).
+- Starting services (e.g., systemctl enable <service_name>).
+- Ensuring that the services are started on instance launch.
+- **Make the Image Private**: Ensure that all custom images created are marked as private. This restricts access so that only you can launch instances from it.
+- Store the Packer template within the repository. The packer/ directory can be added at the root level of your application repository.
+**Build the Custom Image**
+
+Run the following Packer commands to build and validate the custom image:
+
+Format the Packer template:
+```
+packer fmt packer-template.pkr.hcl
+```
+Validate the Packer template:
+
+```
+packer validate -var-file=dev.tfvars packer-template.pkr.hcl
+```
+Build the custom image:
+```
+packer build -var-file=dev.tfvars packer-template.pkr.hcl
+```
+**Using dev.tfvars for Packer Configuration**
+
+- For this project, we will use Packer to build custom application images and manage environment-specific variables (such as AWS region, instance type, etc.) via a dev.tfvars file.
+-  This makes it easy to maintain separate configurations for different environments (e.g., dev, prod, etc.).
+```
+dev.tfvars
+aws_region = "us-east-1"
+source_ami = "ami-<ubuntu-24.04-id>"
+instance_type = "t2.micro"
+```
+
+**Configure Image Launch in AWS**:
+
+- The custom image build should happen in your DEV AWS account and within the default VPC.
+- Once the image is built, ensure the correct security groups are configured when launching instances from it.
+
+**Running the Application on the Custom Image**
+- When the custom image is launched, it should already have MySQL/MariaDB/PostgreSQL installed and running, and all application dependencies should be in place.
+- Ensure that the application starts as a service using systemd when the instance is launched.
+
+
+
 ### Additional Notes
 - Ensure your PostgreSQL server is running before starting the application.
 
@@ -213,4 +279,3 @@ curl http://localhost:your_port/healthz
 
 ### Instructions:
 - Fill in the placeholders in the `.env` file template with actual values.
-
