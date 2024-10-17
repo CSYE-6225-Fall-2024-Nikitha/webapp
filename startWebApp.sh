@@ -1,4 +1,8 @@
 #!/bin/bash
+export DEBIAN_FRONTEND="noninteractive"
+sudo apt-get install dialog apt-utils
+sudo apt-get install -y -q
+
 #remove git
 sudo apt-get remove git
 

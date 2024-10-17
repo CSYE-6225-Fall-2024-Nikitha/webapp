@@ -102,6 +102,18 @@ source "amazon-ebs" "my-ami" {
   vpc_id          = var.vpc_id
   ssh_username    = var.ssh_username
   ssh_timeout     = var.ssh_timeout
+
+  aws_polling {
+    delay_seconds = 120
+    max_attempts  = 30
+  }
+
+  launch_block_device_mappings {
+    device_name = "/dev/sda1"
+    volume_size = 25
+    volume_type = "gp2"
+    delete_on_termination = true
+  }
 }
 
 build {

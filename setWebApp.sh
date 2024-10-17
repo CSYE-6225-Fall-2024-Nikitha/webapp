@@ -1,4 +1,7 @@
 #!/bin/bash
+export DEBIAN_FRONTEND="noninteractive"
+sudo apt-get install dialog apt-utils
+sudo apt-get install -y -q
 
 # Exit immediately if a command exits with a non-zero status
 sudo -i
@@ -10,6 +13,7 @@ cd ../
 # Update the package lists
 echo "Updating package lists..."
 sudo apt-get update
+apt-get install dialog apt-utils
 
 # Install unzip if not already installed
 echo "Installing unzip..."
