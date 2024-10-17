@@ -144,7 +144,7 @@ source "amazon-ebs" "my-ami" {
   ssh_username    = var.ssh_username
   ssh_timeout     = var.ssh_timeout
 
-   aws_polling {
+  aws_polling {
     delay_seconds = var.aws_polling_delay_seconds
     max_attempts  = var.aws_polling_max_attempts
   }
