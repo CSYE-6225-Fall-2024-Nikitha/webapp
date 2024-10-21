@@ -135,7 +135,7 @@ variable "launch_delete_on_termination" {
 source "amazon-ebs" "my-ami" {
   ami_name        = local.ami_name
   ami_description = "Custom AMI created on ${formatdate("YYYYMMDD-HHMMss", timestamp())}"
-  ami_users       = var.ami_users
+  ami_users       = varr.ami_users
   instance_type   = var.instance_type
   source_ami      = var.source_ami
   region          = var.aws_region
