@@ -56,35 +56,6 @@ variable "project_path" {
   type        = string
 }
 
-variable "DB_HOST" {
-  description = "Database Host"
-  type        = string
-}
-
-variable "DB_USER" {
-  description = "Database User"
-  type        = string
-}
-
-variable "DB_PASSWORD" {
-  description = "Database Password"
-  type        = string
-}
-
-variable "DB_NAME" {
-  description = "Database Name"
-  type        = string
-}
-
-variable "DB_PORT" {
-  description = "Database Port"
-  type        = string
-}
-
-variable "DB_DIALECT" {
-  description = "Database Dialect"
-  type        = string
-}
 
 variable "instance_type" {
   description = "The type of EC2 instance to use for the build"
@@ -172,18 +143,6 @@ build {
     script = "./installDependencies.sh"
   }
 
-  provisioner "shell" {
-    environment_vars = [
-      "DB_HOST=${var.DB_HOST}",
-      "DB_USER=${var.DB_USER}",
-      "DB_PASSWORD=${var.DB_PASSWORD}",
-      "DB_NAME=${var.DB_NAME}",
-      "DB_PORT=${var.DB_PORT}",
-      "DB_DIALECT=${var.DB_DIALECT}"
-    ]
-    script = "./setDataBase.sh"
-  }
-
 
   provisioner "file" {
     source      = "${var.project_path}"
@@ -195,15 +154,12 @@ build {
     destination = "/tmp/webapp.service"
   }
 
+  provisioner "file" {
+    source      = "webapp.path"
+    destination = "/tmp/webapp.path"
+  }
+
   provisioner "shell" {
-    environment_vars = [
-      "DB_HOST=${var.DB_HOST}",
-      "DB_USER=${var.DB_USER}",
-      "DB_PASSWORD=${var.DB_PASSWORD}",
-      "DB_NAME=${var.DB_NAME}",
-      "DB_PORT=${var.DB_PORT}",
-      "DB_DIALECT=${var.DB_DIALECT}"
-    ]
     script = "./setWebApp.sh"
   }
 

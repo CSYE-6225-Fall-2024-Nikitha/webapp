@@ -1,0 +1,8 @@
+[Unit]
+Description=Watch for /opt/setDataBase.sh
+
+[Path]
+PathExists=/opt/setDataBase.sh
+
+[Install]
+WantedBy=multi-user.target

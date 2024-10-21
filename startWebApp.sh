@@ -6,8 +6,10 @@ sudo apt-get -y remove git
 
 
 sudo systemctl daemon-reload
-sudo systemctl enable webapp.service
-sudo systemctl start webapp.service
-sudo systemctl status webapp.service
+sudo systemctl enable webapp.path
+sudo systemctl start webapp.path
+sudo systemctl status webapp
+
+sudo journalctl -u csye6225
 
 

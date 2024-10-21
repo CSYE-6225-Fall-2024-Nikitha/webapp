@@ -21,16 +21,16 @@ pwd
 pwd
 pwd
 
-echo "Creating .env file..."
+# echo "Creating .env file..."
 
-sudo tee /home/ubuntu/webapp/.env <<EOF
-DB_HOST=${DB_HOST}
-DB_USER=${DB_USER}
-DB_PASSWORD=${DB_PASSWORD}
-DB_NAME=${DB_NAME}
-DB_PORT=${DB_PORT}
-DB_DIALECT=${DB_DIALECT}
-EOF
+# sudo tee /home/ubuntu/webapp/.env <<EOF
+# DB_HOST=${DB_HOST}
+# DB_USER=${DB_USER}
+# DB_PASSWORD=${DB_PASSWORD}
+# DB_NAME=${DB_NAME}
+# DB_PORT=${DB_PORT}
+# DB_DIALECT=${DB_DIALECT}
+# EOF
 
 
 
@@ -46,6 +46,8 @@ ls -la /home/ubuntu/webapp/
 
 echo "Installing npm packages..."
 sudo npm install 
+sudo touch /opt/setDataBase.sh
+
 
 if [ -f /tmp/webapp.service ]; then
     echo "Moving webapp service file to /etc/systemd/system..."
@@ -54,4 +56,10 @@ else
     echo "/tmp/webapp.service not found, skipping service move."
 fi
 
+if [ -f /tmp/webapp.path ]; then
+    echo "Moving webapp path file to /etc/systemd/system..."
+    sudo mv /tmp/webapp.path /etc/systemd/system/webapp.path
+else
+    echo "/tmp/webapp.path not found, skipping service move."
+fi
 echo "Setup complete."
