@@ -132,7 +132,7 @@ variable "launch_delete_on_termination" {
   default     = true
 }
 
-source "amazon-ebs" "my-ami" {
+  source "amazon-ebs" "my-ami" {
   ami_name        = local.ami_name
   ami_description = "Custom AMI created on ${formatdate("YYYYMMDD-HHMMss", timestamp())}"
   ami_users       = var.ami_users
@@ -186,8 +186,8 @@ build {
 
 
   provisioner "file" {
-    source      = "${var.project_path}"
-    destination = "/home/ubuntu/webapp.zip"
+    source= "${var.project_path}"
+    destination= "/home/ubuntu/webapp.zip"
   }
 
   provisioner "file" {
