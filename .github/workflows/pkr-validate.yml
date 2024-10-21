@@ -59,10 +59,4 @@ jobs:
             -var "ssh_timeout=${{ vars.SSH_TIMEOUT }}" \
             -var "instance_type=${{ vars.INSTANCE_TYPE }}" \
             -var "project_path=/home/runner/work/webapp/webapp.zip" \
-            -var "DB_HOST=${{ secrets.POSTGRES_HOST }}" \
-            -var "DB_USER=${{ secrets.POSTGRES_USERNAME }}" \
-            -var "DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
-            -var "DB_NAME=${{ secrets.POSTGRES_DATABASE }}" \
-            -var "DB_PORT=${{ secrets.POSTGRES_PORT }}" \
-            -var "DB_DIALECT=${{ secrets.POSTGRES_DIALECT}}" \
             packer-template.pkr.hcl
