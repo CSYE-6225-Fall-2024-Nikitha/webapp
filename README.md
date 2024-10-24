@@ -222,7 +222,6 @@ Before proceeding, ensure that you have the following setup:
 - create a packer/ directory to store your Packer template.
 - The template should include configurations for:
 - The Ubuntu 24.04 LTS base image.
-- Installing MySQL, MariaDB, or PostgreSQL locally on the image.
 - Installing all necessary dependencies for the web application (e.g., Java, Python, Tomcat, etc.).
 - Starting services (e.g., systemctl enable <service_name>).
 - Ensuring that the services are started on instance launch.
