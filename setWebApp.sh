@@ -1,7 +1,4 @@
 #!/bin/bash
-
-sudo -i
-cd ../
 cd ../
 cd ../
 cd ../
@@ -18,27 +15,13 @@ sudo unzip -o /home/ubuntu/webapp.zip -d /home/ubuntu/
 
 cd /home/ubuntu/webapp || { echo "Failed to change directory to /home/ubuntu/webapp"; exit 1; }
 pwd
-pwd
-pwd
-
-# echo "Creating .env file..."
-
-# sudo tee /home/ubuntu/webapp/.env <<EOF
-# DB_HOST=${DB_HOST}
-# DB_USER=${DB_USER}
-# DB_PASSWORD=${DB_PASSWORD}
-# DB_NAME=${DB_NAME}
-# DB_PORT=${DB_PORT}
-# DB_DIALECT=${DB_DIALECT}
-# EOF
-
 
 
 ls /home/ubuntu/webapp/
 
 
 echo "Setting permissions and ownership..."
-sudo chown -R csye6225:csye6225 /home/ubuntu/webapp
+sudo chown -R csye6225:csye6225 /home/ubuntu
 sudo chmod 755 /home/ubuntu
 sudo chmod -R 755 /home/ubuntu/webapp
 ls -la /home/ubuntu/webapp/src
