@@ -1,24 +1,39 @@
+const { logApiCall, logger } = require('./logger');
+
 const setErrorResponse = (err, response) => {
-  console.log(err.message); 
-  response.status(503).send(); 
+  logger.error(err.message);
+  response.status(503).send();
 };
 
 const setRouteResponse = (request, response, next) => {
+  const apiName = request.path;
+  const startTime = Date.now();
+
   if (request.path === '/healthz') {
-      return next();
+    return next();
   }
-  response.status(404).send(); 
+
+  const duration = Date.now() - startTime; 
+  logApiCall(apiName, duration);
+  response.status(404).send();
 };
 
 const setResponse = (request, response) => {
+  const apiName = request.path;
+  const startTime = Date.now();
+
   if (request.method === 'GET') {
-      if (request.headers['content-length'] > 0 || (request.body && Object.keys(request.body).length > 0)) {
-          return response.status(400).send(); 
-      }
-      response.set('Cache-Control', 'no-cache');
-      return response.status(200).send();
+    if (request.headers['content-length'] > 0 || (request.body && Object.keys(request.body).length > 0)) {
+      return response.status(400).send();
+    }
+    response.set('Cache-Control', 'no-cache');
+    response.status(200).send();
+
+    const duration = Date.now() - startTime; 
+    logApiCall(apiName, duration);
   } else {
-      return response.status(405).send(); 
+    logger.warn(`Method not allowed for ${apiName}`);
+    return response.status(405).send();
   }
 };
 
