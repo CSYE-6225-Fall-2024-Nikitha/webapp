@@ -4,13 +4,15 @@
 sudo apt-get update -y
 sudo apt-get install -y unzip curl
 
+cd ../
+cd ../
+sudo curl -o amazon-cloudwatch-agent.deb https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 # Download and install the Unified CloudWatch Agent
-curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
-sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
+sudo dpkg -i amazon-cloudwatch-agent.deb
+sudo apt-get install -f
 
-# Move the CloudWatch configuration file to the appropriate directory
-ls 
-ls 
+
+
 sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
 sudo mv /tmp/cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-config.json
 
