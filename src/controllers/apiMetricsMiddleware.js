@@ -1,4 +1,4 @@
-const { logApiCall } = require('./logger');
+const { logApiCall } = require('../utils/logger');
 
 const apiMetricsMiddleware = (req, res, next) => {
   const startTime = Date.now(); 

@@ -1,4 +1,4 @@
-const { logApiCall, logger } = require('./logger');
+const { logApiCall, logger } = require('../utils/logger');
 
 const setErrorResponse = (err, response) => {
   logger.error(err.message);

@@ -1,6 +1,6 @@
 const userService = require('../services/userService');
 const { validateRequest } = require('../services/healthCheckService');
-const { logger, logApiCall } = require('./logger');
+const { logger, logApiCall } = require('../utils/logger');
 
 const validateUserFields = (data) => {
     const { first_name, last_name, password, email } = data;

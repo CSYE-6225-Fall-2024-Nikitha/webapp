@@ -1,6 +1,6 @@
 const { setResponse, setErrorResponse } = require('./errorHandlers'); 
 const { checkDatabaseConnection, validateRequest } = require('../services/healthCheckService'); 
-const { logger, logApiCall } = require('./logger');
+const { logger, logApiCall } = require('../utils/logger');
 
 const healthCheck = async (req, res) => {
     const startTime = Date.now();

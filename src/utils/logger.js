@@ -1,6 +1,7 @@
 const winston = require('winston');
 const { combine, timestamp, json } = winston.format;
 const StatsD = require('hot-shots');
+const root  = require('app-root-path')
 
 // Initialize StatsD client
 const statsd = new StatsD({
@@ -15,7 +16,7 @@ const logger = winston.createLogger({
   transports: [
     new winston.transports.Console(),
     new winston.transports.File({
-      filename: '/home/ubuntu/webapp/logs/webapp.log',
+      filename: root + '/logs/webapp.log',
     }),
   ],
 });

@@ -1,7 +1,7 @@
 const express = require('express');
 const healthCheckRoute = require('./healthRoutes.js');
 const userRoute = require('./userRoutes.js');
-const { logger, logApiCall } = require('./logger'); // Assuming you have a logger setup
+const { logger, logApiCall } = require('../utils/logger'); // Assuming you have a logger setup
 
 const registerRouter = (app) => {
     app.use('/healthz', (req, res, next) => {
