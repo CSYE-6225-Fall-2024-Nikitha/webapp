@@ -2,15 +2,15 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { isValidEmail } = require('../utils/emailValidation');
-const { logger, logApiCall, logDbQuery } = require('../utils/logger'); // Adjust the path as necessary
+const { logger, logDbQuery } = require('../utils/logger'); 
 
 const authenticateUser = async (email, password) => {
-    const startTime = Date.now(); // Start timer for the API call
+    const startTime = Date.now(); 
     try {
-        const userStartTime = Date.now(); // Start timer for DB query
+        const userStartTime = Date.now(); 
         const user = await User.findOne({ where: { email: email } });
-        const userDuration = Date.now() - userStartTime; // Calculate duration
-        logDbQuery(userDuration); // Log DB query duration
+        const userDuration = Date.now() - userStartTime; 
+        logDbQuery(userDuration); 
 
         if (!user) {
             throw new Error('User not found');
@@ -20,25 +20,25 @@ const authenticateUser = async (email, password) => {
         if (!isPasswordValid) {
             throw new Error('Invalid credentials');
         }
+
         return user;
     } finally {
-        const duration = Date.now() - startTime; // API call duration
-        logApiCall('authenticateUser', duration); // Log API call metrics
+        const duration = Date.now() - startTime; 
         logger.info(`Authenticate user request took ${duration}ms`);
     }
 };
 
 const createUser = async ({ first_name, last_name, password, email }) => {
-    const startTime = Date.now(); // Start timer for the API call
+    const startTime = Date.now(); 
     try {
         if (!isValidEmail(email)) {
             throw new Error('Invalid email format');
         }
 
-        const existingUserStartTime = Date.now(); // Start timer for existing user check
+        const existingUserStartTime = Date.now(); 
         const existingUser = await User.findOne({ where: { email: email } });
-        const existingUserDuration = Date.now() - existingUserStartTime; // Calculate duration
-        logDbQuery(existingUserDuration); // Log DB query duration
+        const existingUserDuration = Date.now() - existingUserStartTime; 
+        logDbQuery(existingUserDuration); 
 
         if (existingUser) {
             throw new Error('User already exists');
@@ -47,31 +47,30 @@ const createUser = async ({ first_name, last_name, password, email }) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const createUserStartTime = Date.now(); // Start timer for user creation
+        const createUserStartTime = Date.now(); 
         const user = await User.create({
             email: email,
             password: hashedPassword,
             first_name,
             last_name,
         });
-        const createUserDuration = Date.now() - createUserStartTime; // Calculate duration
-        logDbQuery(createUserDuration); // Log DB query duration
+        const createUserDuration = Date.now() - createUserStartTime;
+        logDbQuery(createUserDuration); 
 
         return user;
     } finally {
-        const duration = Date.now() - startTime; // API call duration
-        logApiCall('createUser', duration); // Log API call metrics
+        const duration = Date.now() - startTime; 
         logger.info(`Create user request took ${duration}ms`);
     }
 };
 
 const updateUser = async (userId, updateData) => {
-    const startTime = Date.now(); // Start timer for the API call
+    const startTime = Date.now(); 
     try {
-        const userStartTime = Date.now(); // Start timer for fetching user
+        const userStartTime = Date.now(); 
         const user = await User.findByPk(userId);
-        const userDuration = Date.now() - userStartTime; // Calculate duration
-        logDbQuery(userDuration); // Log DB query duration
+        const userDuration = Date.now() - userStartTime; 
+        logDbQuery(userDuration); 
 
         if (!user) {
             throw new Error('User not found');
@@ -90,26 +89,25 @@ const updateUser = async (userId, updateData) => {
         }
 
         user.account_updated = new Date();
-        const saveStartTime = Date.now(); // Start timer for saving user
+        const saveStartTime = Date.now(); 
         await user.save();
-        const saveDuration = Date.now() - saveStartTime; // Calculate duration
-        logDbQuery(saveDuration); // Log DB query duration
+        const saveDuration = Date.now() - saveStartTime; 
+        logDbQuery(saveDuration); 
 
         return user;
     } finally {
-        const duration = Date.now() - startTime; // API call duration
-        logApiCall('updateUser', duration); // Log API call metrics
+        const duration = Date.now() - startTime; 
         logger.info(`Update user request took ${duration}ms`);
     }
 };
 
 const getUser = async (userId) => {
-    const startTime = Date.now(); // Start timer for the API call
+    const startTime = Date.now(); 
     try {
-        const userStartTime = Date.now(); // Start timer for fetching user
+        const userStartTime = Date.now(); 
         const user = await User.findByPk(userId, { attributes: { exclude: ['password', 'createdAt', 'updatedAt'] } });
-        const userDuration = Date.now() - userStartTime; // Calculate duration
-        logDbQuery(userDuration); // Log DB query duration
+        const userDuration = Date.now() - userStartTime; 
+        logDbQuery(userDuration); 
 
         if (!user) {
             throw new Error('User not found');
@@ -117,8 +115,7 @@ const getUser = async (userId) => {
 
         return user;
     } finally {
-        const duration = Date.now() - startTime; // API call duration
-        logApiCall('getUser', duration); // Log API call metrics
+        const duration = Date.now() - startTime;
         logger.info(`Get user request took ${duration}ms`);
     }
 };

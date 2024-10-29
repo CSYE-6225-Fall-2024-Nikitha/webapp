@@ -6,10 +6,10 @@ const apiMetricsMiddleware = (req, res, next) => {
   res.on('finish', () => {
     const duration = Date.now() - startTime; 
     const apiName = req.originalUrl; 
-    logApiCall(apiName, duration); 
+    logApiCall(req, res, apiName, duration);
   });
 
   next(); 
 };
 
-module.exports = apiMetricsMiddleware;
+module.exports = { apiMetricsMiddleware };

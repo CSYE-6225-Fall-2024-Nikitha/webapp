@@ -8,6 +8,7 @@ const statsd = new StatsD({
   host: '127.0.0.1',
   port: 8125,
   prefix: 'webapp.',
+  debugger: true,
 });
 
 const logger = winston.createLogger({
@@ -25,7 +26,7 @@ const logger = winston.createLogger({
 function logApiCall(req, res, apiName, duration) {
   const { method, url } = req;
   logger.info({
-    message: `API call ${method} ${url}`,
+    message: `API call ${method} ${url} - ${apiName}`,
     duration,
     status: res.statusCode,
   });
