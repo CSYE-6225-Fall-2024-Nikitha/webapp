@@ -9,8 +9,10 @@ curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amaz
 sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
 # Move the CloudWatch configuration file to the appropriate directory
+ls 
+ls 
 sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
-sudo mv cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-config.json
+sudo mv /tmp/cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-config.json
 
 mkdir -p /home/ubuntu/webapp/logs
 
