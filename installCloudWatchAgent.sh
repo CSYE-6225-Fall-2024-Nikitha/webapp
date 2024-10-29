@@ -21,6 +21,8 @@ sudo chown -R csye6225:csye6225 /home/ubuntu/webapp
 sudo chmod 755 /home/ubuntu/webapp
 sudo chmod -R 755 /home/ubuntu/webapp
 sudo mkdir -p /home/ubuntu/webapp/logs
+sudo chown -R csye6225:csye6225 /home/ubuntu/webapp/logs
+sudo chmod 755 /home/ubuntu/webapp/logs
 
 # Enable and start the CloudWatch Agent service using the configuration
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
