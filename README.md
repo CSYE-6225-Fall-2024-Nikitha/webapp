@@ -10,7 +10,7 @@ Before you begin, ensure you have following installed:-
 2. **PostgreSQL** (v12 or higher)
 3. **npm** (Node package manager, included with Node.js)
 4. **Git VCS** (for version control)
-5. **Packer** (for Custom AMI)
+5. **Packer** (for Custom AMI build)
 6. **Terraform** (IaaC - infra setup)
 
 ## Getting Started
