@@ -70,6 +70,10 @@ const postImage = async (req, res) => {
         if (!supportedFormats.includes(req.file.mimetype)) {
           return res.status(400).json();
         }
+        const existingImage = await Image.findOne({ where: { user_id: userId } });
+        if (existingImage) {
+            return res.status(400).json();
+        }
 
         const imageMetadata = {
             file_name: req.file.originalname,
