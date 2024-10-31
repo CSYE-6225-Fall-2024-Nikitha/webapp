@@ -37,11 +37,7 @@ const deleteImage = async (req, res) => {
         }
 
         const userId = user.id; 
-        console.log("in delete controler");
-        console.log(userId);
         const result = await imageService.deleteImage(userId);
-        console.log("result in controller");
-        console.log(result);
         if (!result) {
             return res.status(404).send(); 
         }
@@ -67,13 +63,11 @@ const postImage = async (req, res) => {
         const userId = user.id; 
 
         if (!req.file) {
-          console.log("here");
             return res.status(400).json();
         }
 
         const supportedFormats = ['image/png', 'image/jpg', 'image/jpeg'];
         if (!supportedFormats.includes(req.file.mimetype)) {
-          console.log("here 1");
           return res.status(400).json();
         }
 
@@ -83,10 +77,8 @@ const postImage = async (req, res) => {
             user_id: userId,
             upload_date: new Date().toISOString().split('T')[0],
         };
-        console.log(imageMetadata);  // For testing purposes, you can remove this line.
-        console.log("are u here");
-        const responseData = await imageService.postImage(imageMetadata);
-
+      
+        const responseData = await imageService.postImage(imageMetadata,req.file);
         return res.status(201).json(responseData); 
     } catch (error) {
         console.error(error);

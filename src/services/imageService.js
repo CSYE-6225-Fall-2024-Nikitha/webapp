@@ -1,7 +1,15 @@
 const Image  = require('../models/Image');
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { Upload } = require("@aws-sdk/lib-storage");
+
+
 
 const s3Client = new S3Client({
+  region: "ap-south-1", 
+  credentials: {
+      accessKeyId: "", 
+      secretAccessKey: "" 
+  }
 });
 
 // GET IMAGE
@@ -11,7 +19,6 @@ const getImage = async (userId) => {
             where: { user_id: userId }, 
         });
 
-        console.log(image);
 
         if (!image) {
             throw new Error('Image not found');
@@ -26,24 +33,22 @@ const getImage = async (userId) => {
         };
     } catch (error) {
       console.log(error);
-        throw new Error(error.message);
+      throw new Error(error.message);
     }
 };
 
 // DELETE IMAGE
 const deleteImage = async (userId) => {
-  console.log("in delete image service")
     try {
-        // const deleteParams = {
-        //     Bucket: process.env.S3_BUCKET_NAME,
-        //     Key: `${userId}/${fileName}`, 
-        // };
-        // await s3Client.send(new DeleteObjectCommand(deleteParams));
+        const deleteParams = {
+            Bucket: process.env.S3_BUCKET_ID,
+            Key: `${userId}`, 
+        };
+        await s3Client.send(new DeleteObjectCommand(deleteParams));
 
         const result = await Image.destroy({
             where: { user_id: userId}
         });
-        console.log("result" );  
         return result > 0; 
     } catch (error) {
         throw new Error('Error deleting image: ' + error.message);
@@ -53,21 +58,25 @@ const deleteImage = async (userId) => {
 // POST IMAGE
 const postImage = async (imageData, file) => {
     try {
-        // const params = {
-        //     Bucket: process.env.S3_BUCKET_NAME,
-        //     Key: `${imageData.user_id}/${file.originalname}`, 
-        //     Body: file.buffer,
-        //     ContentType: file.mimetype,
-        //     ACL: 'public-read', 
-        // };
+        const params = {
+            Bucket: process.env.S3_BUCKET_ID,
+            Key: `${imageData.user_id}`, 
+            Body: file.buffer,
+            ContentType: file.mimetype,
+        };
 
-        // // Upload to S3
-        // await s3Client.send(new PutObjectCommand(params));
+        const upload = new Upload({
+          client: s3Client,
+          params: params
+      });
+
+      await upload.done(); 
+      console.log("File uploaded successfully.");
 
         // Create a record in the database
         const createdImage = await Image.create({
             ...imageData,
-            url: `${process.env.S3_BUCKET_NAME}/${imageData.user_id}/${imageData.file_name}` 
+            url: `${process.env.S3_BUCKET_ID}/${imageData.user_id}/${imageData.file_name}` 
         });
 
         return {
