@@ -2,6 +2,8 @@ const imageService = require('../services/imageService');
 const { authenticateUser } = require('../services/userService'); 
 const { validateRequest } = require('../services/healthCheckService');
 const { v4: uuidv4 } = require('uuid');
+const Image  = require('../models/Image');
+
 
 // GET IMAGE CONTROLLER
 const getImage = async (req, res) => {
