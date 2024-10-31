@@ -5,7 +5,7 @@ const { logDbQuery, s } = require('../utils/logger');
 
 
 const s3Client = new S3Client({
-  
+    region: process.env.AWS_REGION
 });
 
 // GET IMAGE
