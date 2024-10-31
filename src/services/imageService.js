@@ -5,11 +5,7 @@ const { Upload } = require("@aws-sdk/lib-storage");
 
 
 const s3Client = new S3Client({
-  region: "ap-south-1", 
-  credentials: {
-      accessKeyId: "", 
-      secretAccessKey: "" 
-  }
+  
 });
 
 // GET IMAGE
