@@ -1,11 +1,17 @@
 const sequelize = require('../config/dbConfig'); 
+const { logDbQuery } = require('../utils/logger');
 
 const checkDatabaseConnection = async () => {
+    const startTime = Date.now();
     try {
         await sequelize.authenticate();
+        const duration = Date.now() - startTime;
+        logDbQuery(duration);
         return { success: true };
     } catch (error) {
         console.error('Database connection error:', error);
+        const duration = Date.now() - startTime; 
+        logDbQuery(duration);
         throw error;
     }
 };

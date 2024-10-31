@@ -1,16 +1,21 @@
-// src/middlewares/checkConnection.js
 const sequelize = require('../config/dbConfig');
-require('dotenv').config();
+const { logger, logApiCall, logDbQuery } = require('../utils/logger'); 
 
 const checkConnection = async (req, res, next) => {
-  try {
-    await sequelize.authenticate(); 
-    await sequelize.sync(); 
-    next(); 
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-    return res.status(503).json({ message: 'Service Unavailable' }); 
-  }
+    const startTime = Date.now(); 
+    try {
+        await sequelize.authenticate(); 
+        const connectionDuration = Date.now() - startTime;
+        logger.info('Database connection established successfully.');
+        
+        logDbQuery(connectionDuration); 
+        next(); 
+    } catch (error) {
+        logger.error('Unable to connect to the database:', error); 
+        const duration = Date.now() - startTime; 
+        logDbQuery(duration); 
+        return res.status(503).json({ message: 'Service Unavailable' }); 
+    }
 };
 
-module.exports = checkConnection; 
+module.exports = checkConnection;

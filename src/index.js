@@ -1,21 +1,28 @@
-const app = require('./app'); 
-const sequelize = require('./config/dbConfig'); 
+const app = require('./app');
+const sequelize = require('./config/dbConfig');
+const { logger, logDbQuery } = require('./utils/logger'); 
 require('dotenv').config();
 
 const startConnection = async () => {
+  const startTime = Date.now(); 
   try {
-    await sequelize.authenticate();
-    console.log('Database connected');
+    await sequelize.authenticate(); 
+    const durationAuthenticate = Date.now() - startTime; 
+    logger.info('Database connected successfully.'); 
+    logDbQuery('database.authenticate', durationAuthenticate); 
 
+    const syncStartTime = Date.now(); 
     await sequelize.sync(); 
-    console.log('Database synced');
+    const durationSync = Date.now() - syncStartTime; 
+    logger.info('Database synced successfully.'); 
+    logDbQuery('database.sync', durationSync); 
 
-    const PORT = process.env.PORT || 8080;
+    const PORT = process.env.PORT || 8080; 
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      logger.info(`Server is running on port ${PORT}.`);
     });
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    logger.error('Unable to connect to the database:', error);
   }
 };
 

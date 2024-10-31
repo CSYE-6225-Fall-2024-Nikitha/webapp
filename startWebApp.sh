@@ -11,5 +11,3 @@ sudo systemctl start webapp.path
 sudo systemctl status webapp
 
 sudo journalctl -u csye6225
-
-

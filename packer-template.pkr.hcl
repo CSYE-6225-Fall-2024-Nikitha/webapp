@@ -159,8 +159,18 @@ build {
     destination = "/tmp/webapp.path"
   }
 
+
   provisioner "shell" {
     script = "./setWebApp.sh"
+  }
+
+  provisioner "file" {
+    source      = "cloudwatch-config.json"
+    destination = "/tmp/cloudwatch-config.json"
+  }
+
+  provisioner "shell" {
+    script = "./installCloudWatchAgent.sh"
   }
 
   provisioner "shell" {

@@ -2,9 +2,12 @@ const express = require('express');
 const { createUser, updateUser, getUser } = require('../controllers/userController'); 
 const userAuth = require('../utils/userAuth');
 const checkConnection = require('../utils/checkConnection');
+const { apiMetricsMiddleware } = require('../controllers/apiMetricsMiddleware'); // Import the middleware
+
 
 const router = express.Router();
 
+router.use(apiMetricsMiddleware);
 router.head('/self', (req, res) => {
     res.status(405).end();
 });
