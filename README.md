@@ -12,6 +12,7 @@ Before you begin, ensure you have following installed:-
 4. **Git VCS** (for version control)
 5. **Packer** (for Custom AMI build)
 6. **Terraform** (IaaC - infra setup)
+7. **AWS-SDK** (for AWS SDK)
 
 ## Getting Started
 
