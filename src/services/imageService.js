@@ -1,7 +1,7 @@
 const Image  = require('../models/Image');
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require("@aws-sdk/lib-storage");
-const { logDbQuery, s } = require('../utils/logger');
+const { logDbQuery, logS3Call } = require('../utils/logger');
 
 
 const s3Client = new S3Client({
