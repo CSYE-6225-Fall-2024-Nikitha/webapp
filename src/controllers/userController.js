@@ -129,7 +129,7 @@ const updateUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
+        if (error.message === 'Invalid credentials' || error.message === 'User not found' || error.message === 'User not verified') {
             return res.status(401).send(); 
         } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
             return res.status(400).send(); // Return 400 for bad request errors
@@ -173,9 +173,43 @@ const getUser = async (req, res) => {
     }
 };
 
+// VERIFY EMAIL
+const verifyEmail = async (req, res) => {
+    res.set('Cache-Control', 'no-cache');
+    res.set('Content-Type', 'application/json');
+
+    const { user: email, token } = req.query;
+
+    if (!email || !token) {
+        return res.status(400).send();
+    }
+
+    try {
+        const result = await userService.verifyEmail(email, token);
+
+        if (result === 'INVALID_TOKEN') {
+            return res.status(400).send(); 
+        }
+        if (result === 'EXPIRED_TOKEN') {
+            return res.status(400).send(); 
+        }
+        if (result === 'ALREADY_VERIFIED') {
+            return res.status(400).send(); 
+        }
+
+        return res.status(200).json({ message: 'Email verified successfully.' });
+    } catch (error) {
+        console.error(error);
+        if (['User not found', 'Invalid request'].includes(error.message)) {
+            return res.status(400).send();
+        }
+        return res.status(400).send();
+    }
+};
 
 module.exports = {
     createUser,
     updateUser,
     getUser,
+    verifyEmail
 };
