@@ -3,6 +3,10 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { isValidEmail } = require('../utils/emailValidation');
 const { logger, logDbQuery } = require('../utils/logger'); 
+const { v4: uuidv4 } = require('uuid');
+const aws = require('aws-sdk');
+const sns = new aws.SNS();
+
 
 const authenticateUser = async (email, password) => {
     const startTime = Date.now(); 
@@ -20,6 +24,9 @@ const authenticateUser = async (email, password) => {
         if (!isPasswordValid) {
             throw new Error('Invalid credentials');
         }
+        if (!user.email_verified) {
+            throw new Error('User not verified');
+        }
 
         return user;
     } finally {
@@ -29,7 +36,11 @@ const authenticateUser = async (email, password) => {
 };
 
 const createUser = async ({ first_name, last_name, password, email }) => {
+    const token = uuidv4();
+    const verificationSentTime = new Date();
+    const verificationTokenExpiry = new Date(verificationSentTime.getTime() + 2 * 60 * 1000);
     const startTime = Date.now(); 
+
     try {
         if (!isValidEmail(email)) {
             throw new Error('Invalid email format');
@@ -53,9 +64,33 @@ const createUser = async ({ first_name, last_name, password, email }) => {
             password: hashedPassword,
             first_name,
             last_name,
+            token,
+            verification_sent_time: verificationSentTime,
+            verification_token_expiry: verificationTokenExpiry,
         });
         const createUserDuration = Date.now() - createUserStartTime;
         logDbQuery(createUserDuration); 
+
+         // Publish message to SNS topic
+         const snsMessage = JSON.stringify({
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            token: user.token
+        });
+
+        const snsParams = {
+            Message: snsMessage,
+            TopicArn: process.env.SNS_TOPIC_ARN, 
+        };
+
+        try {
+            await sns.publish(snsParams).promise();
+            console.log(`SNS message published for user: ${user.email}`);
+        } catch (snsError) {
+            console.error(`Failed to publish SNS message: ${snsError.message}`);
+            throw new Error('SNS message publication failed');
+        }
 
         return user;
     } finally {
@@ -120,9 +155,40 @@ const getUser = async (userId) => {
     }
 };
 
+const verifyEmail = async (email, token) => {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    if (user.token !== token) {
+        return 'INVALID_TOKEN';
+    }
+
+    const currentTime = new Date();
+    if (user.verification_token_expiry && currentTime > user.verification_token_expiry) {
+        return 'EXPIRED_TOKEN';
+    }
+
+    if (user.email_verified) {
+        return 'ALREADY_VERIFIED';
+    }
+
+    user.email_verified = true;
+    user.token = null; 
+    user.verification_token_expiry = null;
+
+    await user.save();
+
+    return 'VERIFIED';
+};
+
+
 module.exports = {
     authenticateUser,
     createUser,
     updateUser,
     getUser,
+    verifyEmail
 };
