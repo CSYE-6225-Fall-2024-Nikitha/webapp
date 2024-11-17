@@ -108,7 +108,9 @@ const updateUser = async (userId, updateData) => {
         const user = await User.findByPk(userId);
         const userDuration = Date.now() - userStartTime; 
         logDbQuery(userDuration); 
-
+        if(user.email_verified === false){
+            logger.error(`User account not verified: ${user.email}`);
+        }
         if (!user) {
             throw new Error('User not found');
         }
@@ -145,7 +147,9 @@ const getUser = async (userId) => {
         const user = await User.findByPk(userId, { attributes: { exclude: ['password', 'createdAt', 'updatedAt'] } });
         const userDuration = Date.now() - userStartTime; 
         logDbQuery(userDuration); 
-
+        if(user.email_verified === false){
+            logger.error(`User account not verified: ${user.email}`);
+        }
         if (!user) {
             throw new Error('User not found');
         }
@@ -158,25 +162,30 @@ const getUser = async (userId) => {
 };
 
 const verifyEmail = async (email, token) => {
+    logger.info("verifyEmail: Attempting to verify email", { email });
     const startTime = Date.now(); 
     const user = await User.findOne({ where: { email } });
     const userDuration = Date.now() - startTime; 
     logDbQuery(userDuration); 
 
     if (!user) {
+        logger.error("verifyEmail: Failed to verify email: Invalid email");
         throw new Error('User not found');
     }
 
     if (user.token !== token) {
+        logger.error("verifyEmail: Failed to verify email: Invalid Token");
         return 'INVALID_TOKEN';
     }
 
     const currentTime = new Date();
     if (user.verification_token_expiry && currentTime > user.verification_token_expiry) {
+        logger.error("verifyEmail: Failed to verify email: Expired Token");
         return 'EXPIRED_TOKEN';
     }
 
     if (user.email_verified) {
+        logger.error("verifyEmail: User Already verified");
         return 'ALREADY_VERIFIED';
     }
 
@@ -185,7 +194,7 @@ const verifyEmail = async (email, token) => {
     user.verification_token_expiry = null;
 
     await user.save();
-
+    logger.info("verifyEmail: Email verified successfully", { user });
     return 'VERIFIED';
 };
 
