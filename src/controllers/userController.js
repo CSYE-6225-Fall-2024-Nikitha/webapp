@@ -164,7 +164,7 @@ const getUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
+        if (error.message === 'Invalid credentials' || error.message === 'User not found'|| error.message === 'User not verified') {
                 return res.status(401).send(); 
         } else if (error.message === 'Bad Request' || err instanceof SyntaxError ) {
             return res.status(400).send(); 
