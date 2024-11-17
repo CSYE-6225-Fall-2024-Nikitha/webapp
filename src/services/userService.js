@@ -160,7 +160,7 @@ const getUser = async (userId) => {
 const verifyEmail = async (email, token) => {
     const startTime = Date.now(); 
     const user = await User.findOne({ where: { email } });
-    const userDuration = Date.now() - userStartTime; 
+    const userDuration = Date.now() - startTime; 
     logDbQuery(userDuration); 
 
     if (!user) {
