@@ -28,7 +28,6 @@ router.post('/', checkConnection, createUser);
 
 router.get('/self', checkConnection, userAuth, getUser);
 
-router.get('/verify', checkConnection, verifyEmail);
 
 router.put('/self', checkConnection, userAuth, updateUser);
 
