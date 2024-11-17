@@ -5,7 +5,9 @@ const { isValidEmail } = require('../utils/emailValidation');
 const { logger, logDbQuery } = require('../utils/logger'); 
 const { v4: uuidv4 } = require('uuid');
 const aws = require('aws-sdk');
-const sns = new aws.SNS();
+const sns = new aws.SNS({
+    region: process.env.AWS_REGION
+  });
 
 
 const authenticateUser = async (email, password) => {
@@ -156,7 +158,10 @@ const getUser = async (userId) => {
 };
 
 const verifyEmail = async (email, token) => {
+    const startTime = Date.now(); 
     const user = await User.findOne({ where: { email } });
+    const userDuration = Date.now() - userStartTime; 
+    logDbQuery(userDuration); 
 
     if (!user) {
         throw new Error('User not found');
