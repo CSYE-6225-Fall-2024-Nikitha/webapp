@@ -86,9 +86,9 @@ const createUser = async ({ first_name, last_name, password, email }) => {
 
         try {
             await sns.publish(snsParams).promise();
-            console.log(`SNS message published for user: ${user.email}`);
+            logger.info(`SNS message published for user: ${user.email}`);
         } catch (snsError) {
-            console.error(`Failed to publish SNS message: ${snsError.message}`);
+            logger.error(`Failed to publish SNS message: ${snsError.message} for user: ${user.email}`);
             throw new Error('SNS message publication failed');
         }
 
