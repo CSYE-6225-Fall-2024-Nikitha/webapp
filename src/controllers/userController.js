@@ -178,7 +178,7 @@ const verifyEmail = async (req, res) => {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'application/json');
 
-    const { user: email, token } = req.query;
+    const { email, token } = req.query;
 
     if (!email || !token) {
         return res.status(400).json({ message: 'No email or token found' });    }
