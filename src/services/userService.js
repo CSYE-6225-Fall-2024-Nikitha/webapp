@@ -168,6 +168,10 @@ const verifyEmail = async (email, token) => {
     const userDuration = Date.now() - startTime; 
     logDbQuery(userDuration); 
 
+    if(user.email_verified) {
+        logger.error("verifyEmail: User Already verified");
+        return 'ALREADY_VERIFIED';
+    }
     if (!user) {
         logger.error("verifyEmail: Failed to verify email: Invalid email");
         throw new Error('User not found');
