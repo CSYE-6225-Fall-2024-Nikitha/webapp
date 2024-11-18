@@ -6,7 +6,7 @@ const {verifyEmail } = require('../controllers/userController');
 const registerRouter = (app) => {
     app.use('/healthz', healthCheckRoute);
     app.use('/v1/user', userRoute);
-    app.use('/verify', checkConnection, verifyEmail);
+    app.use('/verify', verifyEmail);
 
 };
 
