@@ -168,13 +168,14 @@ const verifyEmail = async (email, token) => {
     const userDuration = Date.now() - startTime; 
     logDbQuery(userDuration); 
 
-    if(user.email_verified) {
-        logger.error("verifyEmail: User Already verified");
-        return 'ALREADY_VERIFIED';
-    }
     if (!user) {
         logger.error("verifyEmail: Failed to verify email: Invalid email");
         throw new Error('User not found');
+    }
+    
+    if (user.email_verified) {
+        logger.error("verifyEmail: User Already verified");
+        return 'ALREADY_VERIFIED';
     }
 
     if (user.token !== token) {
@@ -186,11 +187,6 @@ const verifyEmail = async (email, token) => {
     if (user.verification_token_expiry && currentTime > user.verification_token_expiry) {
         logger.error("verifyEmail: Failed to verify email: Expired Token");
         return 'EXPIRED_TOKEN';
-    }
-
-    if (user.email_verified) {
-        logger.error("verifyEmail: User Already verified");
-        return 'ALREADY_VERIFIED';
     }
 
     user.email_verified = true;
