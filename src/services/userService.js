@@ -4,6 +4,7 @@ const saltRounds = 10;
 const { isValidEmail } = require('../utils/emailValidation');
 const { logger, logDbQuery } = require('../utils/logger'); 
 const { v4: uuidv4 } = require('uuid');
+require('dotenv').config();
 const aws = require('aws-sdk');
 const sns = new aws.SNS({
     region: process.env.AWS_REGION
@@ -172,7 +173,7 @@ const verifyEmail = async (email, token) => {
         logger.error("verifyEmail: Failed to verify email: Invalid email");
         throw new Error('User not found');
     }
-    
+
     if (user.email_verified) {
         logger.error("verifyEmail: User Already verified");
         return 'ALREADY_VERIFIED';

@@ -19,6 +19,8 @@ jobs:
           POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
         ports:
           - 5432:5432
 
@@ -34,6 +36,8 @@ jobs:
       DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
       DB_PORT: ${{ secrets.POSTGRES_PORT }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
       NODE_ENV: test
 
     steps:
@@ -65,3 +69,5 @@ jobs:
           DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
           DB_PORT: ${{ secrets.POSTGRES_PORT }}
           NODE_ENV: test
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}

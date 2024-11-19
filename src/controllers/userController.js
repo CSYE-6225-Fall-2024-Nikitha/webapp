@@ -60,7 +60,7 @@ const createUser = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        if (['User already exists', 'Invalid email format', 'Bad Request'].includes(error.message) || err instanceof SyntaxError ) {
+        if (['User already exists', 'Invalid email format', 'Bad Request'].includes(error.message) || error instanceof SyntaxError ) {
             return res.status(400).send(); // Known errors return 400
         }
 
@@ -196,6 +196,7 @@ const verifyEmail = async (req, res) => {
             return res.status(400).json({message: 'Expired token'}); 
         }
 
+        res.set('Content-Type', 'text/html');
         return res.status(200).send(`
             <!DOCTYPE html>
             <html lang="en">
