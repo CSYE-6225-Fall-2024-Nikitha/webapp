@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      ami_id: ${{ steps.fetch-ami-id.outputs.ami }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,7 +63,7 @@ jobs:
   update_launch_template_demo:
     needs: build
     runs-on: ubuntu-latest
-    name: Update Launch Template for Demo & Trigger Instance Refresh
+    name: Update Launch Template for Demo & Trigger Instance Refresh 
     steps:
       - name: Configure AWS Credentials for Demo
         uses: aws-actions/configure-aws-credentials@v4
@@ -74,7 +76,7 @@ jobs:
         run: |
           echo "Updating Launch Template with the new AMI ID"
           aws ec2 create-launch-template-version \
-            --launch-template-data '{"ImageId":"${{ steps.fetch-ami-id.outputs.ami }}"}' \
+            --launch-template-data '{"ImageId":"${{ needs.build.outputs.ami_id }}"}' \
             --source-version 1 \
             --launch-template-name ${{ vars.LAUNCH_TEMPLATE_NAME }} \
             --no-cli-pager
