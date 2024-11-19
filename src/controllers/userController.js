@@ -272,7 +272,6 @@ const verifyEmail = async (req, res) => {
                 <div class="emoji">🎉</div>
                 <h1>Email Verified!</h1>
                 <p>Congratulations, your email has been successfully verified! You're now ready to explore all the features.</p>
-                <a href="/" class="button">Go to Home</a>
                 <footer>Need help? <a href="mailto:support@nikitha-kambhampati.me">Contact Support</a></footer>
               </div>
             </body>
