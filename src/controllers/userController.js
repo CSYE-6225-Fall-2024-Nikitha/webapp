@@ -60,7 +60,7 @@ const createUser = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        if (['User already exists', 'Invalid email format', 'Bad Request'].includes(error.message) || err instanceof SyntaxError ) {
+        if (['User already exists', 'Invalid email format', 'Bad Request'].includes(error.message) || error instanceof SyntaxError ) {
             return res.status(400).send(); // Known errors return 400
         }
 
@@ -129,7 +129,7 @@ const updateUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
+        if (error.message === 'Invalid credentials' || error.message === 'User not found' || error.message === 'User not verified') {
             return res.status(401).send(); 
         } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
             return res.status(400).send(); // Return 400 for bad request errors
@@ -164,7 +164,7 @@ const getUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
+        if (error.message === 'Invalid credentials' || error.message === 'User not found'|| error.message === 'User not verified') {
                 return res.status(401).send(); 
         } else if (error.message === 'Bad Request' || err instanceof SyntaxError ) {
             return res.status(400).send(); 
@@ -173,9 +173,123 @@ const getUser = async (req, res) => {
     }
 };
 
+// VERIFY EMAIL
+const verifyEmail = async (req, res) => {
+    res.set('Cache-Control', 'no-cache');
+    res.set('Content-Type', 'application/json');
+
+    const { email, token } = req.query;
+
+    if (!email || !token) {
+        return res.status(400).json({ message: 'No email or token found' });   
+    }
+
+    try {
+        const result = await userService.verifyEmail(email, token);
+        if (result === 'ALREADY_VERIFIED') {
+            return res.status(400).json({message: 'Token already verified !!'}); 
+        }
+        if (result === 'INVALID_TOKEN') {
+            return res.status(400).json({message: 'Invalid token'}); 
+        }
+        if (result === 'EXPIRED_TOKEN') {
+            return res.status(400).json({message: 'Expired token'}); 
+        }
+
+        res.set('Content-Type', 'text/html');
+        return res.status(200).send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Email Verification Successful</title>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f7fa;
+                  margin: 0;
+                  padding: 0;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                }
+          
+                .container {
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                  text-align: center;
+                  max-width: 400px;
+                  margin: 20px;
+                  font-size: 16px;
+                }
+          
+                h1 {
+                  color: #4CAF50;
+                  font-size: 2.5em;
+                }
+          
+                p {
+                  color: #333;
+                  line-height: 1.6;
+                  margin-bottom: 20px;
+                }
+          
+                .button {
+                  background-color: #4CAF50;
+                  color: white;
+                  padding: 10px 20px;
+                  border: none;
+                  border-radius: 5px;
+                  text-decoration: none;
+                  font-weight: bold;
+                  cursor: pointer;
+                  transition: background-color 0.3s ease;
+                }
+          
+                .button:hover {
+                  background-color: #45a049;
+                }
+          
+                .emoji {
+                  font-size: 3em;
+                  margin: 20px 0;
+                }
+          
+                footer {
+                  font-size: 14px;
+                  color: #888;
+                  margin-top: 20px;
+                }
+          
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="emoji">🎉</div>
+                <h1>Email Verified!</h1>
+                <p>Congratulations, your email has been successfully verified! You're now ready to explore all the features.</p>
+                <footer>Need help? <a href="mailto:support@nikitha-kambhampati.me">Contact Support</a></footer>
+              </div>
+            </body>
+            </html>
+          `);
+          
+    } catch (error) {
+        console.error(error);
+        if (['User not found', 'Invalid request'].includes(error.message)) {
+            return res.status(400).json({message: error.message});
+        }
+        return res.status(400).json({message: error.message});
+    }
+};
 
 module.exports = {
     createUser,
     updateUser,
     getUser,
+    verifyEmail
 };

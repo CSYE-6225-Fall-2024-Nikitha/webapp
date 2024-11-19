@@ -3,6 +3,13 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { isValidEmail } = require('../utils/emailValidation');
 const { logger, logDbQuery } = require('../utils/logger'); 
+const { v4: uuidv4 } = require('uuid');
+require('dotenv').config();
+const aws = require('aws-sdk');
+const sns = new aws.SNS({
+    region: process.env.AWS_REGION
+  });
+
 
 const authenticateUser = async (email, password) => {
     const startTime = Date.now(); 
@@ -20,6 +27,9 @@ const authenticateUser = async (email, password) => {
         if (!isPasswordValid) {
             throw new Error('Invalid credentials');
         }
+        if (!user.email_verified) {
+            throw new Error('User not verified');
+        }
 
         return user;
     } finally {
@@ -29,7 +39,11 @@ const authenticateUser = async (email, password) => {
 };
 
 const createUser = async ({ first_name, last_name, password, email }) => {
+    const token = uuidv4();
+    const verificationSentTime = new Date();
+    const verificationTokenExpiry = new Date(verificationSentTime.getTime() + 2 * 60 * 1000);
     const startTime = Date.now(); 
+
     try {
         if (!isValidEmail(email)) {
             throw new Error('Invalid email format');
@@ -53,9 +67,33 @@ const createUser = async ({ first_name, last_name, password, email }) => {
             password: hashedPassword,
             first_name,
             last_name,
+            token,
+            verification_sent_time: verificationSentTime,
+            verification_token_expiry: verificationTokenExpiry,
         });
         const createUserDuration = Date.now() - createUserStartTime;
         logDbQuery(createUserDuration); 
+
+         // Publish message to SNS topic
+         const snsMessage = JSON.stringify({
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            token: user.token
+        });
+
+        const snsParams = {
+            Message: snsMessage,
+            TopicArn: process.env.SNS_TOPIC_ARN, 
+        };
+
+        try {
+            await sns.publish(snsParams).promise();
+            logger.info(`SNS message published for user: ${user.email}`);
+        } catch (snsError) {
+            logger.error(`Failed to publish SNS message: ${snsError.message} for user: ${user.email}`);
+            throw new Error('SNS message publication failed');
+        }
 
         return user;
     } finally {
@@ -71,7 +109,9 @@ const updateUser = async (userId, updateData) => {
         const user = await User.findByPk(userId);
         const userDuration = Date.now() - userStartTime; 
         logDbQuery(userDuration); 
-
+        if(user.email_verified === false){
+            logger.error(`User account not verified: ${user.email}`);
+        }
         if (!user) {
             throw new Error('User not found');
         }
@@ -108,7 +148,9 @@ const getUser = async (userId) => {
         const user = await User.findByPk(userId, { attributes: { exclude: ['password', 'createdAt', 'updatedAt'] } });
         const userDuration = Date.now() - userStartTime; 
         logDbQuery(userDuration); 
-
+        if(user.email_verified === false){
+            logger.error(`User account not verified: ${user.email}`);
+        }
         if (!user) {
             throw new Error('User not found');
         }
@@ -120,9 +162,48 @@ const getUser = async (userId) => {
     }
 };
 
+const verifyEmail = async (email, token) => {
+    logger.info("verifyEmail: Attempting to verify email", { email });
+    const startTime = Date.now(); 
+    const user = await User.findOne({ where: { email } });
+    const userDuration = Date.now() - startTime; 
+    logDbQuery(userDuration); 
+
+    if (!user) {
+        logger.error("verifyEmail: Failed to verify email: Invalid email");
+        throw new Error('User not found');
+    }
+
+    if (user.email_verified) {
+        logger.error("verifyEmail: User Already verified");
+        return 'ALREADY_VERIFIED';
+    }
+
+    if (user.token !== token) {
+        logger.error("verifyEmail: Failed to verify email: Invalid Token");
+        return 'INVALID_TOKEN';
+    }
+
+    const currentTime = new Date();
+    if (user.verification_token_expiry && currentTime > user.verification_token_expiry) {
+        logger.error("verifyEmail: Failed to verify email: Expired Token");
+        return 'EXPIRED_TOKEN';
+    }
+
+    user.email_verified = true;
+    user.token = null; 
+    user.verification_token_expiry = null;
+
+    await user.save();
+    logger.info("verifyEmail: Email verified successfully", { user });
+    return 'VERIFIED';
+};
+
+
 module.exports = {
     authenticateUser,
     createUser,
     updateUser,
     getUser,
+    verifyEmail
 };

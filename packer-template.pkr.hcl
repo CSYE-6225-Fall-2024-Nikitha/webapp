@@ -176,4 +176,9 @@ build {
   provisioner "shell" {
     script = "./startWebApp.sh"
   }
+
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
+  }
 }

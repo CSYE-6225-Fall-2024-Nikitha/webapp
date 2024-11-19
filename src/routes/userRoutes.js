@@ -1,5 +1,5 @@
 const express = require('express');
-const { createUser, updateUser, getUser } = require('../controllers/userController'); 
+const { createUser, updateUser, getUser, verifyEmail } = require('../controllers/userController'); 
 const { getImage, postImage, deleteImage } = require('../controllers/imageController');
 const multer = require('multer');
 const userAuth = require('../utils/userAuth');
@@ -27,6 +27,7 @@ router.head('/', (req, res) => {
 router.post('/', checkConnection, createUser);
 
 router.get('/self', checkConnection, userAuth, getUser);
+
 
 router.put('/self', checkConnection, userAuth, updateUser);
 
