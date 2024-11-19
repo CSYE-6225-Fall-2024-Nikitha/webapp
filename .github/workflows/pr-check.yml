@@ -18,7 +18,7 @@ jobs:
           POSTGRES_DB: ${{ secrets.POSTGRES_DATABASE }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
           SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
         ports:
           - 5432:5432
@@ -35,7 +35,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
       DB_PORT: ${{ secrets.POSTGRES_PORT }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
       SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
       NODE_ENV: test
 
@@ -51,7 +51,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Wait for PostgreSQL to be ready
         run: |
@@ -75,5 +75,5 @@ jobs:
           DB_NAME: ${{ secrets.POSTGRES_DATABASE }}
           DB_PORT: ${{ secrets.POSTGRES_PORT }}
           NODE_ENV: test
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
           SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
