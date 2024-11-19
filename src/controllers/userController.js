@@ -187,7 +187,7 @@ const verifyEmail = async (req, res) => {
     try {
         const result = await userService.verifyEmail(email, token);
         if (result === 'ALREADY_VERIFIED') {
-            return res.status(400).json({message: 'Token already verified'}); 
+            return res.status(400).json({message: 'Token already verified !!'}); 
         }
         if (result === 'INVALID_TOKEN') {
             return res.status(400).json({message: 'Invalid token'}); 
