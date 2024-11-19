@@ -46,18 +46,6 @@ jobs:
             -var "project_path=/home/runner/work/webapp/webapp.zip" \
             packer-template.pkr.hcl
 
-  update_launch_template_demo:
-    needs: build
-    runs-on: ubuntu-latest
-    name: Update Launch Template for Demo & Trigger Instance Refresh
-    steps:
-      - name: Configure AWS Credentials for Demo
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEMO }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
-          aws-region: ${{ vars.AWS_REGION }}
-
       - name: Fetch Latest AMI ID from Packer Manifest
         id: fetch-ami-id
         run: |
@@ -69,6 +57,18 @@ jobs:
           AMI_ID=$(jq -r '.builds[-1].artifact_id | split(":") | .[2]' manifest.json)
           echo "AMI ID: $AMI_ID"
           echo "ami=$AMI_ID" >> "$GITHUB_OUTPUT"
+
+  update_launch_template_demo:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Update Launch Template for Demo & Trigger Instance Refresh
+    steps:
+      - name: Configure AWS Credentials for Demo
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEMO }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Update Launch Template with latest AMI ID
         run: |
