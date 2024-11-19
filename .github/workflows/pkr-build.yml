@@ -51,14 +51,17 @@ jobs:
       - name: Fetch Latest AMI ID from Packer Manifest
         id: fetch-ami-id
         run: |
-          echo "Fetching the latest AMI ID from Packer Build Manifest"
-          if [[ ! -f manifest.json ]]; then
+          if [[ -f manifest.json ]]; then
+            AMI_ID=$(jq -r '.builds[-1].artifact_id | split(":")[1]' manifest.json || echo "null")
+            if [[ "$AMI_ID" == "null" ]]; then
+              echo "Failed to parse AMI ID from manifest.json"
+              exit 1
+            fi
+            echo "ami=$AMI_ID" >> $GITHUB_OUTPUT
+          else
             echo "manifest.json file not found"
             exit 1
           fi
-          AMI_ID=$(jq -r '.builds[-1].artifact_id | split(":") | .[2]' manifest.json)
-          echo "AMI ID: $AMI_ID"
-          echo "ami=$AMI_ID" >> "$GITHUB_OUTPUT"
 
   update_launch_template_demo:
     needs: build
@@ -74,9 +77,10 @@ jobs:
 
       - name: Update Launch Template with latest AMI ID
         run: |
+          AMI_ID=${{ needs.build.outputs.ami_id }}
           echo "Updating Launch Template with the new AMI ID"
           aws ec2 create-launch-template-version \
-            --launch-template-data '{"ImageId":"${{ needs.build.outputs.ami_id }}"}' \
+            --launch-template-data "{\"ImageId\":\"$AMI_ID\"}" \
             --source-version 1 \
             --launch-template-name ${{ vars.LAUNCH_TEMPLATE_NAME }} \
             --no-cli-pager
