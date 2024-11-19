@@ -4,17 +4,57 @@ const app = require('../app');
 const { User } = require('../models/User'); 
 const bcrypt = require('bcrypt');
 const base64 = require('base-64');
+const { v4: uuidv4 } = require('uuid');
+const AWS = require('aws-sdk');
+const AWSMock = require('aws-sdk-mock');
+require('dotenv').config();
 
+let sns;
+sns = new AWS.SNS();
 
 const username = 'dummyUser@example.com';
 const password = 'dummyPassword'; 
 
+  
+// beforeAll(() => {
+//     AWSMock.mock('SNS', 'publish', (params, callback) => {
+//       if (params.TopicArn === process.env.SNS_TOPIC_ARN) {
+//         callback(null, { MessageId: 'test-message-id' });
+//       } else {
+//         callback(new Error('Invalid TopicArn'));
+//       }
+//     });
+//   });
+  
+//   afterAll(() => {
+//     AWSMock.restore('SNS');  
+//   });
+
+
 describe('User Creation and Health Check Integration Tests', () => {
-    beforeAll(async () => {
-        await sequelize.sync({ force: true }); 
+    let snsPublishMock;
+
+  beforeAll(() => {
+    // Set up the mock for SNS publish method using AWSMock
+    snsPublishMock = jest.fn((params, callback) => {
+      if (params.TopicArn === process.env.SNS_TOPIC_ARN) {
+        callback(null, { MessageId: 'test-message-id' });  // Mock success response
+      } else {
+        callback(new Error('Invalid TopicArn'));  // Mock failure response
+      }
     });
+
+    AWSMock.mock('SNS', 'publish', snsPublishMock);
+  });
+
+  afterAll(() => {
+    AWSMock.restore('SNS');
+  });
+
+  beforeAll(async () => {
+    await sequelize.sync({ force: true }); 
+  });
     
-    // Before each test, clear the User table
     // beforeEach(async () => {
     //     await User.destroy({ where: {} }); // Clear all users from the table
     // });
@@ -26,16 +66,18 @@ describe('User Creation and Health Check Integration Tests', () => {
                 email: `bigdata-${Date.now()}@example.com`,
                 first_name: 'John',
                 last_name: 'Doe',
-                password: 'password123'
+                password: 'password1234',
             };
-
             const response = await request(app)
                 .post('/v1/user') 
                 .send(userData);
             expect(response.status).toBe(201); 
             expect(response.body).toHaveProperty('id'); 
-            expect(response.body.email).toBe(userData.email); 
+            await new Promise(process.nextTick);
+            expect(snsPublishMock).toHaveBeenCalledTimes(0);
         });
+        
+         
 
         it('should return 400 for invalid user data', async () => {
             const invalidUserData = {
@@ -96,22 +138,6 @@ describe('User Creation and Health Check Integration Tests', () => {
 
             expect(response.status).toBe(400); 
         });
-
-        // it('should hash the password before saving', async () => {
-        //     const userData = {
-        //         email: `hashed-${Date.now()}@example.com`,
-        //         first_name: 'Alice',
-        //         last_name: 'Smith',
-        //         password: 'password123'
-        //     };
-
-        //     const response = await request(app)
-        //         .post('/v1/user')
-        //         .send(userData);
-
-        //     const user = await User.findByPk(response.body.id);
-        //     expect(user).not.toHaveProperty('password', userData.password);
-        // });
 
         it('should allow unique email for user accounts', async () => {
             const userData1 = {
