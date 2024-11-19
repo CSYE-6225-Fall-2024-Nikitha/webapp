@@ -129,9 +129,11 @@ const updateUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        if (error.message === 'Invalid credentials' || error.message === 'User not found' || error.message === 'User not verified') {
+        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
             return res.status(401).send(); 
-        } else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
+        }else if(error.message === 'User not verified') {
+                return res.status(403).send();
+        }else if (error.message === 'Body is missing to update' || error.message === 'Bad Request') {
             return res.status(400).send(); // Return 400 for bad request errors
         } else if (error.message === 'Forbidden user') {
             return res.status(400).send(); 
@@ -164,10 +166,12 @@ const getUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        if (error.message === 'Invalid credentials' || error.message === 'User not found'|| error.message === 'User not verified') {
+        if (error.message === 'Invalid credentials' || error.message === 'User not found') {
                 return res.status(401).send(); 
         } else if (error.message === 'Bad Request' || err instanceof SyntaxError ) {
             return res.status(400).send(); 
+        } else if(error.message === 'User not verified'){
+            return res.status(403).send();
         }
         return res.status(400).send(); 
     }
