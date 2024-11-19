@@ -66,7 +66,7 @@ describe('User Creation and Health Check Integration Tests', () => {
                 email: `bigdata-${Date.now()}@example.com`,
                 first_name: 'John',
                 last_name: 'Doe',
-                password: 'password1234',
+                password: 'password12345',
             };
             const response = await request(app)
                 .post('/v1/user') 
