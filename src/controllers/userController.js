@@ -181,7 +181,8 @@ const verifyEmail = async (req, res) => {
     const { email, token } = req.query;
 
     if (!email || !token) {
-        return res.status(400).json({ message: 'No email or token found' });    }
+        return res.status(400).json({ message: 'No email or token found' });   
+    }
 
     try {
         const result = await userService.verifyEmail(email, token);
@@ -195,7 +196,88 @@ const verifyEmail = async (req, res) => {
             return res.status(400).json({message: 'Expired token'}); 
         }
 
-        return res.status(200).json({ message: 'Email verified successfully.' });
+        return res.status(200).send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Email Verification Successful</title>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f7fa;
+                  margin: 0;
+                  padding: 0;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                }
+          
+                .container {
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                  text-align: center;
+                  max-width: 400px;
+                  margin: 20px;
+                  font-size: 16px;
+                }
+          
+                h1 {
+                  color: #4CAF50;
+                  font-size: 2.5em;
+                }
+          
+                p {
+                  color: #333;
+                  line-height: 1.6;
+                  margin-bottom: 20px;
+                }
+          
+                .button {
+                  background-color: #4CAF50;
+                  color: white;
+                  padding: 10px 20px;
+                  border: none;
+                  border-radius: 5px;
+                  text-decoration: none;
+                  font-weight: bold;
+                  cursor: pointer;
+                  transition: background-color 0.3s ease;
+                }
+          
+                .button:hover {
+                  background-color: #45a049;
+                }
+          
+                .emoji {
+                  font-size: 3em;
+                  margin: 20px 0;
+                }
+          
+                footer {
+                  font-size: 14px;
+                  color: #888;
+                  margin-top: 20px;
+                }
+          
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="emoji">🎉</div>
+                <h1>Email Verified!</h1>
+                <p>Congratulations, your email has been successfully verified! You're now ready to explore all the features.</p>
+                <a href="/" class="button">Go to Home</a>
+                <footer>Need help? <a href="mailto:support@nikitha-kambhampati.me">Contact Support</a></footer>
+              </div>
+            </body>
+            </html>
+          `);
+          
     } catch (error) {
         console.error(error);
         if (['User not found', 'Invalid request'].includes(error.message)) {
