@@ -3,6 +3,37 @@
 ## Overview
 This project implements a Health Check API, followed by User creation APIs as part of a cloud-native web application assignment. The API checks the health of the application by verifying the connection to the PostgreSQL database and responds accordingly.The User API creates user, fetches and updates user
 
+### **Web Application Updates**
+
+- **Observability**:  
+  - Logs: Application log data is stored in Amazon CloudWatch.  
+  - Metrics: CloudWatch collects metrics for API usage, including the number of calls and response times.  
+
+- **Custom Metrics**:  
+  - **API Call Count**: Tracks the frequency of API calls.  
+  - **API Response Time**: Measures the time taken (ms) to process each API call.  
+  - **Database Query Time**: Records the execution time (ms) of database queries.  
+  - **S3 Operation Time**: Tracks the duration (ms) of calls to AWS S3.  
+
+- **API Features**:  
+  - All request/response payloads are JSON.  
+  - Proper HTTP status codes are returned for all operations.  
+  - APIs follow authentication and authorization protocols.  
+
+- **Image Management**:  
+  - Users can upload profile pictures in formats like PNG, JPG, and JPEG.  
+  - Images are stored in an S3 bucket, with metadata saved in the database.  
+  - Users can delete images they added; images are removed from both S3 and the database.  
+  - Image updates are unsupported—users must delete and re-upload.  
+
+- **S3 Security**:  
+  - S3 credentials are securely managed via IAM roles attached to EC2 instances.  
+
+
+- **SNS Integration**: Sends a JSON payload to an SNS topic upon user account creation, enabling email verification through AWS Lambda.  
+- **Account Verification**: Ensures API access is restricted for unverified users until email verification is completed.
+
+
 ## Prerequisites
 Before you begin, ensure you have following installed:-
 
@@ -13,6 +44,7 @@ Before you begin, ensure you have following installed:-
 5. **Packer** (for Custom AMI build)
 6. **Terraform** (IaaC - infra setup)
 7. **AWS-SDK** (for AWS SDK)
+8. **Winston Logger** (Cloud Watch)
 
 ## Getting Started
 
@@ -40,6 +72,8 @@ DB_PASSWORD=your_database_password
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=your_database_name
+AWS_REGION=your_aws_region
+SNS_ARN_ID=your_sns_arn
 
 ### Install Dependencies
 Run the following command to install the required dependencies:
