@@ -10,9 +10,12 @@ const getImage = async (req, res) => {
     const { email, password } = req.auth; 
 
     try {
-        validateRequest(req);
         const user = await authenticateUser(email, password);
-        
+        if(error.message === 'User not verified') {
+            return res.status(403).send();
+        }
+        validateRequest(req);
+
         if (!user) {
             return res.status(401).send(); 
         }
@@ -22,6 +25,9 @@ const getImage = async (req, res) => {
 
         return res.status(200).json(imageData);
     } catch (error) {
+        if(error.message === 'User not verified') {
+            return res.status(403).send();
+        }
         return res.status(404).json();
     }
 };
@@ -31,8 +37,11 @@ const deleteImage = async (req, res) => {
     const { email, password } = req.auth; 
 
     try {
-        validateRequest(req);
         const user = await authenticateUser(email, password);
+        if(error.message === 'User not verified') {
+            return res.status(403).send();
+        }
+        validateRequest(req);
         
         if (!user) {
             return res.status(401).send(); 
@@ -46,6 +55,9 @@ const deleteImage = async (req, res) => {
 
         return res.status(204).send();
     } catch (error) {
+        if(error.message === 'User not verified') {
+            return res.status(403).send();
+        }
         return res.status(404).send();
     }
 };
@@ -57,7 +69,10 @@ const postImage = async (req, res) => {
 
     try {
         const user = await authenticateUser(email, password);
-
+        if(error.message === 'User not verified') {
+            return res.status(403).send();
+        }
+        
         if (!user) {
             return res.status(401).send(); 
         }
@@ -88,6 +103,9 @@ const postImage = async (req, res) => {
         return res.status(201).json(responseData); 
     } catch (error) {
         console.error(error);
+        if(error.message === 'User not verified') {
+            return res.status(403).send();
+        }
         return res.status(400).json();
     }
 };

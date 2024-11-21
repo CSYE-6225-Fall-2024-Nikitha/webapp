@@ -15,6 +15,61 @@ sns = new AWS.SNS();
 const username = 'dummyUser@example.com';
 const password = 'dummyPassword'; 
 
+
+describe('SNS publish test', () => {
+  let snsPublishMock = jest.fn();
+
+  beforeAll(() => {
+    snsPublishMock = jest.fn((params, callback) => {
+        const expectedArn = process.env.SNS_TOPIC_ARN;
+  
+        if (params.TopicArn === expectedArn) {
+          callback(null, { MessageId: 'test-message-id' });
+        } else {
+          const error = new Error(`Invalid parameter: TopicArn Reason: Expected '${expectedArn}' but got '${params.TopicArn}'`);
+          error.code = 'InvalidParameter';
+          callback(error);
+        }
+      });
+      AWSMock.mock('SNS', 'publish', snsPublishMock);
+
+  });
+
+  afterAll(() => {
+    AWSMock.restore('SNS');
+    
+  });
+
+  test('should call SNS publish with correct parameters and return success', async () => {
+    const params = {
+      Message: 'Test message',
+      TopicArn: process.env.SNS_TOPIC_ARN,
+    };
+
+    const response = await new AWS.SNS().publish(params).promise();
+
+    expect(snsPublishMock).toHaveBeenCalled();
+    expect(snsPublishMock).toHaveBeenCalledWith(
+      expect.objectContaining({ TopicArn: process.env.SNS_TOPIC_ARN }),
+      expect.any(Function)
+    );
+
+    expect(response).toEqual({ MessageId: 'test-message-id' });
+  });
+
+  test('should call SNS publish with incorrect TopicArn and return error', async () => {
+    const params = {
+      Message: 'Test message',
+      TopicArn: 'invalid-topic-arn',
+    };
+
+    await expect(sns.publish(params).promise()).rejects.toThrow('Invalid parameter: TopicArn Reason: An ARN must have at least 6 elements, not 1');
+
+    expect(snsPublishMock).toHaveBeenCalled();
+  });
+});
+
+
   
 // beforeAll(() => {
 //     AWSMock.mock('SNS', 'publish', (params, callback) => {
@@ -38,9 +93,9 @@ describe('User Creation and Health Check Integration Tests', () => {
     // Set up the mock for SNS publish method using AWSMock
     snsPublishMock = jest.fn((params, callback) => {
       if (params.TopicArn === process.env.SNS_TOPIC_ARN) {
-        callback(null, { MessageId: 'test-message-id' });  // Mock success response
+        callback(null, { MessageId: 'test-message-id' });  
       } else {
-        callback(new Error('Invalid TopicArn'));  // Mock failure response
+        callback(new Error('Invalid TopicArn'));  
       }
     });
 
