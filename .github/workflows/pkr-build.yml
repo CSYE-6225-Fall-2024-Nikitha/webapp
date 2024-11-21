@@ -109,8 +109,9 @@ jobs:
             echo "Instance refresh failed."
             exit 1
           elif [ "$REFRESH_STATUS" == "Cancelled" ]; then
-            echo "Instance refresh was cancelled."
+            echo "Instance refresh cancelled."
             exit 1
           else
-            echo "Unexpected exit status: $REFRESH_STATUS"
+            echo "Unexpected exit: $REFRESH_STATUS"
             exit 1
+          fi
