@@ -5,7 +5,7 @@ const verifyRoute = require('./verifyRoutes.js');
 
 const registerRouter = (app) => {
     app.use('/healthz', healthCheckRoute);
-    app.use('/cicd', healthCheckRoute);
+   // app.use('/cicd', healthCheckRoute);
     app.use('/v1/user', userRoute);
     app.use('/verify', verifyRoute);
 
