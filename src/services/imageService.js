@@ -1,22 +1,19 @@
 const Image  = require('../models/Image');
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require("@aws-sdk/lib-storage");
-const { logDbQuery, logS3Call } = require('../utils/logger');
+
 
 
 const s3Client = new S3Client({
-    region: process.env.AWS_REGION
+  region: "ap-south-1", 
 });
 
 // GET IMAGE
 const getImage = async (userId) => {
     try {
-      const start = Date.now(); 
         const image = await Image.findOne({
             where: { user_id: userId }, 
         });
-        const duration = Date.now() - start;
-        logDbQuery(duration); 
 
 
         if (!image) {
@@ -43,17 +40,11 @@ const deleteImage = async (userId) => {
             Bucket: process.env.S3_BUCKET_ID,
             Key: `${userId}`, 
         };
-        const starts3 = Date.now();
         await s3Client.send(new DeleteObjectCommand(deleteParams));
-        const durationS3 = Date.now() - starts3;
-        logS3Call(durationS3);
 
-        const start = Date.now(); 
         const result = await Image.destroy({
             where: { user_id: userId}
         });
-        const duration = Date.now() - start;
-        logDbQuery(duration); 
         return result > 0; 
     } catch (error) {
         throw new Error('Error deleting image: ' + error.message);
@@ -69,25 +60,20 @@ const postImage = async (imageData, file) => {
             Body: file.buffer,
             ContentType: file.mimetype,
         };
-        const s3PostStart = Date.now();
+
         const upload = new Upload({
           client: s3Client,
           params: params
       });
-      const durationS3Post = Date.now() - s3PostStart;
-        logS3Call(durationS3Post);
 
       await upload.done(); 
       console.log("File uploaded successfully.");
 
         // Create a record in the database
-        const start = Date.now();
         const createdImage = await Image.create({
             ...imageData,
             url: `${process.env.S3_BUCKET_ID}/${imageData.user_id}/${imageData.file_name}` 
         });
-        const duration = Date.now() - start;
-        logDbQuery(duration); 
 
         return {
             file_name: createdImage.file_name,
